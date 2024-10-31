@@ -38,8 +38,8 @@ func (s *echoHttpServer) RunHttpServer(
 	s.echo.Server.MaxHeaderBytes = 1 << 20
 
 	if len(configEcho) > 0 {
-		ehcoFunc := configEcho[0]
-		if ehcoFunc != nil {
+		echoFunc := configEcho[0]
+		if echoFunc != nil {
 			configEcho[0](s.echo)
 		}
 	}

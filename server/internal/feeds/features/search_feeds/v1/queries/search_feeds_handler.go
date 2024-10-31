@@ -2,6 +2,10 @@ package queries
 
 import (
 	"context"
+
+	"github.com/natserract/toktik/internal/feeds/features/search_feeds/v1/dtos"
+	"github.com/natserract/toktik/pkg/config"
+	"github.com/natserract/toktik/pkg/scraper"
 )
 
 type SearchFeedsHandler struct{}
@@ -13,6 +17,19 @@ func NewSearchFeedsHandler() *SearchFeedsHandler {
 func (c *SearchFeedsHandler) Handle(
 	ctx context.Context,
 	query *SearchFeeds,
-) (interface {}, error) {
-	return nil, nil
+) (*dtos.SearchFeedsResponseDTO, error) {
+	cfg := config.GetConfig()
+
+	s := scraper.NewScraper(cfg.RapidApiKey, cfg.RapiApiHost)
+	feeds, err := s.SearchVideos(scraper.SearchVideoParams{
+		Keywords: query.Keywords,
+		Count:    "10",
+		Region:   "us",
+		SortType: "0",
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &dtos.SearchFeedsResponseDTO{Data: feeds.Data.Videos}, nil
 }
