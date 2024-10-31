@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/natserract/toktik/internal/feeds"
 	"github.com/natserract/toktik/pkg/config"
 	echoHttp "github.com/natserract/toktik/pkg/http"
 	echoHttpOptions "github.com/natserract/toktik/pkg/http/config"
@@ -30,6 +31,13 @@ func main() {
 		Port: ":" + cfg.Port,
 		Host: cfg.Host,
 	})
+
+	e.GetEchoInstance().Logger.SetLevel(2)
+	e.SetupDefaultMiddlewares()
+
+	// HTTP routing
+	feeds := feeds.NewFeeds()
+	feeds.Mount(e)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
@@ -56,9 +64,9 @@ func main() {
 		e.Cfg().Port,
 	)
 
-	// Wait for interrupt signal to gracefully shutdown the server with a timeout of 10 seconds.
+	// Wait for interrupt signal to gracefully shutdown the server with a timeout of 15 seconds.
 	<-ctx.Done()
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 	if err := e.GracefulShutdown(ctx); err != nil {
 		e.GetEchoInstance().Logger.Errorf("error shutting down echo server: %v", err)
