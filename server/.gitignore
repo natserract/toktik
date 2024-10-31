@@ -1,0 +1,45 @@
+.DS_Store
+coverage.txt
+_test
+vendor
+.idea
+*.iml
+*.out
+.vscode
+
+# Go workspace file
+go.work
+
+# Test binary, built with `go tests -c`
+*.test
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Tools
+.idea
+.idea/*
+
+.go/
+.go-cache/
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+.env
