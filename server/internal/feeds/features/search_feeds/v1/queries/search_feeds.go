@@ -6,6 +6,7 @@ import (
 
 type SearchFeeds struct {
 	Keywords string
+	Count    string
 }
 
 func (s *SearchFeeds) Validate() error {

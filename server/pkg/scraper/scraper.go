@@ -100,7 +100,6 @@ type SearchVideoParams struct {
 	Keywords string
 	Count    string
 	Region   string
-	SortType string
 }
 
 func (t *Scraper) SearchVideos(params SearchVideoParams) (*Response, error) {
@@ -114,7 +113,8 @@ func (t *Scraper) SearchVideos(params SearchVideoParams) (*Response, error) {
 	q.Add("keywords", params.Keywords)
 	q.Add("region", params.Region)
 	q.Add("count", params.Count)
-	q.Add("sort_type", params.SortType) // latest content no more than one week old
+	q.Add("publish_time", "7") // latest content no more than one week old
+	q.Add("sort_type", "0")
 	req.URL.RawQuery = q.Encode()
 
 	req.Header.Add("X-RapidAPI-Key", t.APIKey)

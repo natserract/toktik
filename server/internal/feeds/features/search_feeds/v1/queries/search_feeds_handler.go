@@ -23,9 +23,8 @@ func (c *SearchFeedsHandler) Handle(
 	s := scraper.NewScraper(cfg.RapidApiKey, cfg.RapiApiHost)
 	feeds, err := s.SearchVideos(scraper.SearchVideoParams{
 		Keywords: query.Keywords,
-		Count:    "10",
+		Count:    query.Count,
 		Region:   "us",
-		SortType: "0",
 	})
 	if err != nil {
 		return nil, err
