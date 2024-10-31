@@ -48,12 +48,25 @@ func (ep *searchFeedsEndpoint) handler() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, "query validation failed")
 		}
 
-		q := queries.NewSearchFeedsHandler()
-		queryResult, err := q.Handle(ctx, &query)
+		var result *dtos.SearchFeedsResponseDTO
+
+		// Cached
+		err := ep.Store.GetFeeds(request.Keywords, &result)
 		if err != nil {
-			return c.String(http.StatusBadRequest, "error in sending SearchFeeds")
+			q := queries.NewSearchFeedsHandler()
+			queryResult, err := q.Handle(ctx, &query)
+			if err != nil {
+				return c.String(http.StatusBadRequest, "error in sending SearchFeeds")
+			}
+
+			result = queryResult;
+
+			// Store the result
+			if err := ep.Store.SetFeeds(request.Keywords, queryResult); err != nil {
+				return c.String(http.StatusBadRequest, "can't set feeds cache")
+			}
 		}
 
-		return c.JSON(http.StatusOK, queryResult)
+		return c.JSON(http.StatusOK, result)
 	}
 }

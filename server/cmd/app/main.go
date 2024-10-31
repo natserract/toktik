@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/gob"
 	"errors"
 	"fmt"
 	"log"
@@ -16,9 +17,15 @@ import (
 	"github.com/natserract/toktik/pkg/config"
 	echoHttp "github.com/natserract/toktik/pkg/http"
 	echoHttpOptions "github.com/natserract/toktik/pkg/http/config"
+	"github.com/natserract/toktik/shared/store"
 )
 
 func main() {
+	// Used for serializing bigcache store
+	// https://stackoverflow.com/questions/21934730/gob-type-not-registered-for-interface-mapstringinterface
+	gob.Register([]interface{}{})
+	gob.Register(map[string]interface{}{})
+
 	err := godotenv.Load()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to load .env %v\n", err)
@@ -33,6 +40,12 @@ func main() {
 		Host: cfg.Host,
 	})
 
+	// InMemory DB always be initialized
+	store, err := store.NewStore()
+	if err != nil {
+		e.GetEchoInstance().Logger.Fatal(err)
+	}
+
 	e.GetEchoInstance().Logger.SetLevel(2)
 	e.SetupDefaultMiddlewares()
 
@@ -45,7 +58,7 @@ func main() {
 			)
 		})
 	})
-	feeds := feeds.NewFeeds()
+	feeds := feeds.NewFeeds(store)
 	feeds.Mount(e)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
