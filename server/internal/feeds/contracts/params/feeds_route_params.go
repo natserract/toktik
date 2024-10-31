@@ -1,3 +1,7 @@
 package params
 
-type FeedsRouteParams struct{} // repository, etc
+import "github.com/labstack/echo/v4"
+
+type FeedsRouteParams struct {
+	FeedsGroup *echo.Group `name:"feed-echo-group"`
+}

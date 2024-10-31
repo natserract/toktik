@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/labstack/echo/v4"
 	"github.com/natserract/toktik/internal/feeds"
 	"github.com/natserract/toktik/pkg/config"
 	echoHttp "github.com/natserract/toktik/pkg/http"
@@ -36,6 +37,14 @@ func main() {
 	e.SetupDefaultMiddlewares()
 
 	// HTTP routing
+	e.RouteBuilder().RegisterRoutes(func(e *echo.Echo) {
+		e.GET("", func(ec echo.Context) error {
+			return ec.String(
+				http.StatusOK,
+				fmt.Sprint("Application is running..."),
+			)
+		})
+	})
 	feeds := feeds.NewFeeds()
 	feeds.Mount(e)
 
