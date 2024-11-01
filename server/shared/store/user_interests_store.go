@@ -35,6 +35,25 @@ func NewUserInterestsStore() (*UserInterestsStore, error) {
 	return &UserInterestsStore{Cache: cache}, nil
 }
 
+type UserInterestsMetadata struct {
+	ID    string
+	Title string
+}
+
+type UserInterestsContent struct {
+	UserID         string
+	Watched        map[string]UserInterestsMetadata
+	InterestVector []float64
+}
+
+func (c *UserInterestsStore) NewContent(userID string) UserInterestsContent {
+	return UserInterestsContent{
+		UserID:         userID,
+		Watched:        make(map[string]UserInterestsMetadata),
+		InterestVector: make([]float64, 0),
+	}
+}
+
 func (c *UserInterestsStore) SetUserInterests(key string, value interface{}) error {
 	var buffer bytes.Buffer
 	encoder := gob.NewEncoder(&buffer)
@@ -57,8 +76,10 @@ func (c *UserInterestsStore) GetUserInterests(key string, dest interface{}) erro
 type UserInterestsStoreActor string
 
 const (
+	// Store by search (keywords)
 	SearchUserInterestsActor UserInterestsStoreActor = "search_user_interests"
-	WatchUserInterestsActor  UserInterestsStoreActor = "watch_user_interests"
+	// Store by watched content (video metadata)
+	WatchUserInterestsActor UserInterestsStoreActor = "watch_user_interests"
 )
 
 func (c *UserInterestsStore) Key(actor UserInterestsStoreActor, params ...string) string {

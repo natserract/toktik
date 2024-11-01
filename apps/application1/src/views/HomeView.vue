@@ -17,7 +17,7 @@ export default {
   name: 'VideoPlayer',
   setup() {
     // Set the source of the video to the Go server endpoint
-    const videoSrc = ref('http://localhost:8080/api/v1/feeds/7408578407421824261')
+    const videoSrc = ref('http://localhost:8080/api/v1/feeds/7432034974246669611/stream')
     const videoPlayer = ref(null)
 
     // Methods for handling video events
