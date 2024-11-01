@@ -23,7 +23,7 @@ func NewStreamsEndpoint(
 }
 
 func (ep *streamsEndpoint) MapEndpoint() {
-	ep.FeedsGroup.GET("/:id", ep.handler())
+	ep.FeedsGroup.GET("/:id/stream", ep.handler())
 }
 
 func (ep *streamsEndpoint) handler() echo.HandlerFunc {

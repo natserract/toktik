@@ -4,24 +4,6 @@ import HelloWorld from '@/components/HelloWorld.vue'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="Application 1" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/hello">Hello World</RouterLink>
-      </nav>
-      <div class="hr-container">
-        <hr />
-      </div>
-      <div class="extra">Go to "<RouterLink to="/hello">Hello World</RouterLink>" route to see reusable Components &amp; Composables</div>
-    </div>
-  </header>
-
   <RouterView />
 </template>
 

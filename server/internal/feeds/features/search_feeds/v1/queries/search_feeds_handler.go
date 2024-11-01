@@ -23,10 +23,10 @@ func (c *SearchFeedsHandler) Handle(
 	ctx context.Context,
 	query *SearchFeeds,
 ) (*dtos.SearchFeedsResponseDTO, error) {
-	var result *dtos.SearchFeedsResponseDTO
+	var videos *[]scraper.VideoInfo
 
 	// Cached
-	err := c.Store.Feeds.GetFeeds(query.Keywords, &result)
+	err := c.Store.Feeds.GetFeeds(query.Keywords, &videos)
 	if err != nil {
 		cfg := config.GetConfig()
 
@@ -40,13 +40,13 @@ func (c *SearchFeedsHandler) Handle(
 			return nil, err
 		}
 
-		result = &dtos.SearchFeedsResponseDTO{Data: feeds.Data.Videos}
+		videos = &feeds.Data.Videos
 
 		// Store the result
-		if err := c.Store.Feeds.SetFeeds(query.Keywords, result); err != nil {
+		if err := c.Store.Feeds.SetFeeds(query.Keywords, videos); err != nil {
 			return nil, err
 		}
 	}
 
-	return result, nil
+	return &dtos.SearchFeedsResponseDTO{Data: *videos}, nil
 }

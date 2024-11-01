@@ -5,6 +5,8 @@ import (
 	"fmt"
 
 	"github.com/natserract/toktik/internal/feeds/features/get_feed_by_id/v1/dtos"
+	"github.com/natserract/toktik/pkg/scraper"
+
 	"github.com/natserract/toktik/shared/store"
 )
 
@@ -26,9 +28,18 @@ func (c *GetFeedByIdHandler) Handle(
 
 	// Cached
 	iterator := c.Store.Feeds.Cache.Iterator()
-	currValue, err := iterator.Value()
-	if err == nil {
-		fmt.Print(currValue)
+	for iterator.SetNext() {
+		current, err := iterator.Value()
+
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		var retrievedData *[]scraper.VideoInfo
+		c.Store.Feeds.GetFeeds(current.Key(), &retrievedData)
+
+		fmt.Println(current.Key())
+		fmt.Println(retrievedData)
 	}
 
 	return &dtos.GetFeedByIdResponseDto{}, nil

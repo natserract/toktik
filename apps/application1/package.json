@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@toktik/components": "workspace:*",
+    "@videojs-player/vue": "^1.0.0",
+    "video.js": "^8.19.1",
     "vue": "^3.2.36",
     "vue-router": "^4.0.15"
   },
