@@ -68,11 +68,8 @@ func (c *GetFeedByIdHandler) Handle(
 			return nil, err
 		}
 
-		// Set feeds by default using `keywords`
-		// At this situation, I used uuid as a random key, but it doesn't affect other mechanism.
-		//
-		// When looking to find value, it will executed in whole iterations of Feeds store
-		if err := c.Store.Feeds.SetFeeds(uuid.String(), videos); err != nil {
+		key := c.Store.Feeds.Key(store.GetFeedsActor, uuid.String())
+		if err := c.Store.Feeds.SetFeeds(key, videos); err != nil {
 			return nil, err
 		}
 	}

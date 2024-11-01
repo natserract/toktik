@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/gob"
+	"strings"
 	"time"
 
 	"github.com/allegro/bigcache/v3"
@@ -14,7 +15,7 @@ type FeedsStore struct {
 }
 
 func NewFeedsStore() (*FeedsStore, error) {
-	config := bigcache.DefaultConfig(1 * time.Minute)
+	config := bigcache.DefaultConfig(3 * time.Minute)
 
 	cache, err := bigcache.New(context.Background(), config)
 	if err != nil {
@@ -41,4 +42,22 @@ func (c *FeedsStore) GetFeeds(key string, dest interface{}) error {
 	buffer := bytes.NewBuffer(data)
 	decoder := gob.NewDecoder(buffer)
 	return decoder.Decode(dest)
+}
+
+type FeedsStoreActor string
+
+const (
+	SearchFeedsActor FeedsStoreActor = "search_feeds"
+	GetFeedsActor FeedsStoreActor = "get_feeds"
+)
+
+func (c *FeedsStore) Key(actor FeedsStoreActor, params ...string) string {
+	cacheKey := string(actor)
+
+	if len(params) > 0 {
+        // Join the parameters with a separator (e.g., ":")
+        cacheKey += "_" + strings.Join(params, "_")
+    }
+
+    return cacheKey
 }

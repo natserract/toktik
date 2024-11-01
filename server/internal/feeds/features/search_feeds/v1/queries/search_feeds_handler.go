@@ -25,14 +25,14 @@ func (c *SearchFeedsHandler) Handle(
 ) (*dtos.SearchFeedsResponseDTO, error) {
 	var videos *[]scraper.VideoInfo
 
-	// Cached
-	err := c.Store.Feeds.GetFeeds(query.Keywords, &videos)
+	key := c.Store.Feeds.Key(store.SearchFeedsActor, query.Keywords, query.Count)
+	err := c.Store.Feeds.GetFeeds(key, &videos)
 	if err != nil {
 		cfg := config.GetConfig()
 		s := scraper.NewScraper(cfg.RapidApiKey, cfg.RapiApiHost)
 
 		feeds, err := s.SearchVideos(scraper.SearchVideosParams{
-			Keywords: query.Keywords,
+			Keywords: key,
 			Count:    query.Count,
 			Region:   "us",
 		})
@@ -43,7 +43,7 @@ func (c *SearchFeedsHandler) Handle(
 		videos = &feeds.Data.Videos
 
 		// Store to the cache
-		if err := c.Store.Feeds.SetFeeds(query.Keywords, videos); err != nil {
+		if err := c.Store.Feeds.SetFeeds(key, videos); err != nil {
 			return nil, err
 		}
 	}
