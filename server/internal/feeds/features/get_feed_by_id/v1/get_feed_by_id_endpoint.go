@@ -1,4 +1,4 @@
-package endpoints
+package v1
 
 import (
 	"net/http"
@@ -6,31 +6,32 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/natserract/toktik/internal/feeds/contracts/params"
-	"github.com/natserract/toktik/internal/feeds/features/search_feeds/v1/dtos"
-	"github.com/natserract/toktik/internal/feeds/features/search_feeds/v1/queries"
+	"github.com/natserract/toktik/internal/feeds/data/repositories"
+	"github.com/natserract/toktik/internal/feeds/features/get_feed_by_id/v1/dtos"
 )
 
-type searchFeedsEndpoint struct {
+type getFeedByIdEndpoint struct {
 	params.FeedsRouteParams
 }
 
-func NewSearchFeedsEndpoint(
+func NewGetFeedByIdEndpoint(
 	params params.FeedsRouteParams,
-) *searchFeedsEndpoint {
-	return &searchFeedsEndpoint{
+) *getFeedByIdEndpoint {
+	return &getFeedByIdEndpoint{
 		FeedsRouteParams: params,
 	}
 }
 
-func (ep *searchFeedsEndpoint) MapEndpoint() {
-	ep.FeedsGroup.GET("/search", ep.handler())
+func (ep *getFeedByIdEndpoint) MapEndpoint() {
+	ep.FeedsGroup.GET("/:id", ep.handler())
 }
 
-func (ep *searchFeedsEndpoint) handler() echo.HandlerFunc {
+func (ep *getFeedByIdEndpoint) handler() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
 
-		request := &dtos.SearchFeedsRequestDTO{}
+		request := &dtos.GetFeedByIdRequestDto{}
+
 		if err := c.Bind(request); err != nil {
 			return c.String(http.StatusBadRequest, "error in the binding request")
 		}
@@ -40,15 +41,15 @@ func (ep *searchFeedsEndpoint) handler() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, "error in the binding request")
 		}
 
-		query := queries.SearchFeeds{
-			Keywords: request.Keywords,
-			Count:    request.Count,
+		query := GetFeedById{
+			Id: request.Id,
 		}
 		if err := query.Validate(); err != nil {
 			return c.String(http.StatusBadRequest, "query validation failed")
 		}
 
-		q := queries.NewSearchFeedsHandler(ep.Store)
+		repo := repositories.NewFeedsRepository(ep.Store)
+		q := NewGetFeedByIdHandler(repo)
 		queryResult, err := q.Handle(ctx, &query)
 		if err != nil {
 			return c.String(http.StatusBadRequest, "error in sending SearchFeeds")

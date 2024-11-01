@@ -1,9 +1,10 @@
-package queries
+package v1
 
 import (
 	"context"
 
 	"github.com/gofrs/uuid"
+	"github.com/natserract/toktik/internal/feeds/data/repositories"
 	"github.com/natserract/toktik/internal/feeds/features/get_feed_by_id/v1/dtos"
 	"github.com/natserract/toktik/pkg/config"
 	"github.com/natserract/toktik/pkg/scraper"
@@ -12,12 +13,12 @@ import (
 )
 
 type GetFeedByIdHandler struct {
-	Store *store.Store
+	inMemoryRepository repositories.FeedsRepository
 }
 
-func NewGetFeedByIdHandler(s *store.Store) *GetFeedByIdHandler {
+func NewGetFeedByIdHandler(r repositories.FeedsRepository) *GetFeedByIdHandler {
 	return &GetFeedByIdHandler{
-		Store: s,
+		inMemoryRepository: r,
 	}
 }
 
@@ -28,15 +29,17 @@ func (c *GetFeedByIdHandler) Handle(
 	var result *scraper.VideoInfo
 
 	// Cached
-	iterator := c.Store.Feeds.Cache.Iterator()
+	iterator := c.inMemoryRepository.Store.Feeds.Cache.Iterator()
 	for iterator.SetNext() {
 		current, err := iterator.Value()
 		if err != nil {
 			return nil, err
 		}
 
-		var videos *[]scraper.VideoInfo
-		c.Store.Feeds.GetFeeds(current.Key(), &videos)
+		videos, err := c.inMemoryRepository.GetAllFeeds(current.Key())
+		if err != nil {
+			return nil, err
+		}
 
 		// Find feed in cache
 		for _, video := range *videos {
@@ -69,8 +72,8 @@ func (c *GetFeedByIdHandler) Handle(
 			return nil, err
 		}
 
-		key := c.Store.Feeds.Key(store.GetFeedByIdActor, uuid.String())
-		if err := c.Store.Feeds.SetFeeds(key, videos); err != nil {
+		key := c.inMemoryRepository.Store.Feeds.Key(store.GetFeedByIdActor, uuid.String())
+		if err := c.inMemoryRepository.SaveFeeds(key, &videos); err != nil {
 			return nil, err
 		}
 	}

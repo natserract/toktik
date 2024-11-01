@@ -1,4 +1,4 @@
-package endpoints
+package v1
 
 import (
 	"net/http"
@@ -6,7 +6,8 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/natserract/toktik/internal/feeds/contracts/params"
-	getFeedById "github.com/natserract/toktik/internal/feeds/features/get_feed_by_id/v1/queries"
+	"github.com/natserract/toktik/internal/feeds/data/repositories"
+	getFeedV1 "github.com/natserract/toktik/internal/feeds/features/get_feed_by_id/v1"
 	"github.com/natserract/toktik/internal/feeds/features/streams/v1/dtos"
 )
 
@@ -41,8 +42,9 @@ func (ep *streamsEndpoint) handler() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, "error in the binding request")
 		}
 
-		q := getFeedById.NewGetFeedByIdHandler(ep.Store)
-		feed, err := q.Handle(ctx, &getFeedById.GetFeedById{
+		repo := repositories.NewFeedsRepository(ep.Store)
+		q := getFeedV1.NewGetFeedByIdHandler(repo)
+		feed, err := q.Handle(ctx, &getFeedV1.GetFeedById{
 			Id: request.Id,
 		})
 		if err != nil {

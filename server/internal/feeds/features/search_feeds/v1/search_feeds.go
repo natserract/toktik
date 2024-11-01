@@ -1,4 +1,4 @@
-package queries
+package v1
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation"
