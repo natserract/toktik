@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/natserract/toktik/internal/feeds/contracts/params"
 	"github.com/natserract/toktik/internal/feeds/features/get_feed_by_id/v1/dtos"
+	"github.com/natserract/toktik/internal/feeds/features/get_feed_by_id/v1/queries"
 )
 
 type getFeedByIdEndpoint struct {
@@ -27,6 +28,8 @@ func (ep *getFeedByIdEndpoint) MapEndpoint() {
 
 func (ep *getFeedByIdEndpoint) handler() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		ctx := c.Request().Context()
+
 		request := &dtos.GetFeedByIdRequestDto{}
 
 		if err := c.Bind(request); err != nil {
@@ -38,6 +41,19 @@ func (ep *getFeedByIdEndpoint) handler() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, "error in the binding request")
 		}
 
-		return c.JSON(http.StatusOK, request.Id)
+		query := queries.GetFeedById{
+			Id: request.Id,
+		}
+		if err := query.Validate(); err != nil {
+			return c.String(http.StatusBadRequest, "query validation failed")
+		}
+
+		q := queries.NewGetFeedByIdHandler(ep.Store)
+		queryResult, err := q.Handle(ctx, &query)
+		if err != nil {
+			return c.String(http.StatusBadRequest, "error in sending SearchFeeds")
+		}
+
+		return c.JSON(http.StatusOK, queryResult)
 	}
 }

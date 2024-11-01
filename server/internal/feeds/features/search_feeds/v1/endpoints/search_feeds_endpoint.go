@@ -31,7 +31,6 @@ func (ep *searchFeedsEndpoint) handler() echo.HandlerFunc {
 		ctx := c.Request().Context()
 
 		request := &dtos.SearchFeedsRequestDTO{}
-
 		if err := c.Bind(request); err != nil {
 			return c.String(http.StatusBadRequest, "error in the binding request")
 		}
@@ -43,30 +42,18 @@ func (ep *searchFeedsEndpoint) handler() echo.HandlerFunc {
 
 		query := queries.SearchFeeds{
 			Keywords: request.Keywords,
+			Count:    request.Count,
 		}
 		if err := query.Validate(); err != nil {
 			return c.String(http.StatusBadRequest, "query validation failed")
 		}
 
-		var result *dtos.SearchFeedsResponseDTO
-
-		// Cached
-		err := ep.Store.Feeds.GetFeeds(request.Keywords, &result)
+		q := queries.NewSearchFeedsHandler(ep.Store)
+		queryResult, err := q.Handle(ctx, &query)
 		if err != nil {
-			q := queries.NewSearchFeedsHandler()
-			queryResult, err := q.Handle(ctx, &query)
-			if err != nil {
-				return c.String(http.StatusBadRequest, "error in sending SearchFeeds")
-			}
-
-			result = queryResult
-
-			// Store the result
-			if err := ep.Store.Feeds.SetFeeds(request.Keywords, queryResult); err != nil {
-				return c.String(http.StatusBadRequest, "can't set feeds cache")
-			}
+			return c.String(http.StatusBadRequest, "error in sending SearchFeeds")
 		}
 
-		return c.JSON(http.StatusOK, result)
+		return c.JSON(http.StatusOK, queryResult)
 	}
 }

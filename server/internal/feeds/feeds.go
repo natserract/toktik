@@ -5,6 +5,7 @@ import (
 	"github.com/natserract/toktik/internal/feeds/contracts/params"
 	getFeedById "github.com/natserract/toktik/internal/feeds/features/get_feed_by_id/v1/endpoints"
 	searchFeeds "github.com/natserract/toktik/internal/feeds/features/search_feeds/v1/endpoints"
+	streamFeeds "github.com/natserract/toktik/internal/feeds/features/streams/v1/endpoints"
 	"github.com/natserract/toktik/pkg/http/contracts"
 	"github.com/natserract/toktik/shared/store"
 )
@@ -28,5 +29,6 @@ func (s *Feeds) Mount(e contracts.EchoHttpServer) {
 		}
 		searchFeeds.NewSearchFeedsEndpoint(params).MapEndpoint()
 		getFeedById.NewGetFeedByIdEndpoint(params).MapEndpoint()
+		streamFeeds.NewStreamsEndpoint(params).MapEndpoint()
 	})
 }

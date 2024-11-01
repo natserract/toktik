@@ -14,7 +14,7 @@ type FeedsStore struct {
 }
 
 func NewFeedsStore() (*FeedsStore, error) {
-	config := bigcache.DefaultConfig(10 * time.Minute)
+	config := bigcache.DefaultConfig(1 * time.Minute)
 
 	cache, err := bigcache.New(context.Background(), config)
 	if err != nil {
