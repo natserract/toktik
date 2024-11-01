@@ -51,7 +51,7 @@ func (ep *searchFeedsEndpoint) handler() echo.HandlerFunc {
 		var result *dtos.SearchFeedsResponseDTO
 
 		// Cached
-		err := ep.Store.GetFeeds(request.Keywords, &result)
+		err := ep.Store.Feeds.GetFeeds(request.Keywords, &result)
 		if err != nil {
 			q := queries.NewSearchFeedsHandler()
 			queryResult, err := q.Handle(ctx, &query)
@@ -59,10 +59,10 @@ func (ep *searchFeedsEndpoint) handler() echo.HandlerFunc {
 				return c.String(http.StatusBadRequest, "error in sending SearchFeeds")
 			}
 
-			result = queryResult;
+			result = queryResult
 
 			// Store the result
-			if err := ep.Store.SetFeeds(request.Keywords, queryResult); err != nil {
+			if err := ep.Store.Feeds.SetFeeds(request.Keywords, queryResult); err != nil {
 				return c.String(http.StatusBadRequest, "can't set feeds cache")
 			}
 		}
