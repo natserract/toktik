@@ -29,6 +29,7 @@ func NewScraper(apiKey string, apiHost string) *Scraper {
 }
 
 type VideoInfo struct {
+	ID                  string       `json:"id,omitempty"`
 	AwemeID             string       `json:"aweme_id"`
 	VideoID             string       `json:"video_id"`
 	Region              string       `json:"region"`
@@ -85,24 +86,24 @@ type Author struct {
 	Avatar   string `json:"avatar"`
 }
 
-type Data struct {
-	Videos []VideoInfo `json:"videos"`
-}
-
-type Response struct {
+type Response[T any] struct {
 	Code    int    `json:"code"`
 	Message string `json:"success"`
 	// ProcessedTime int    `json:"processed_time"`
-	Data Data `json:"data,omitempty"`
+	Data T `json:"data,omitempty"`
 }
 
-type SearchVideoParams struct {
+type SearchVideosData struct {
+	Videos []VideoInfo `json:"videos"`
+}
+
+type SearchVideosParams struct {
 	Keywords string
 	Count    string
 	Region   string
 }
 
-func (t *Scraper) SearchVideos(params SearchVideoParams) (*Response, error) {
+func (t *Scraper) SearchVideos(params SearchVideosParams) (*Response[SearchVideosData], error) {
 	url := fmt.Sprintf("https://%s/feed/search", t.APIHost)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -129,7 +130,44 @@ func (t *Scraper) SearchVideos(params SearchVideoParams) (*Response, error) {
 	defer res.Body.Close()
 	body, _ := io.ReadAll(res.Body)
 
-	var response Response
+	var response Response[SearchVideosData]
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	return &response, nil
+}
+
+type GetVideoData struct {
+	*VideoInfo
+}
+
+func (t *Scraper) GetVideo(videoId string) (*Response[GetVideoData], error) {
+	url := fmt.Sprintf("https://%s", t.APIHost)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	q := req.URL.Query()
+	// https://www.tiktok.com/@tiktok/video/${videoId}
+	q.Add("url", fmt.Sprintf("https://www.tiktok.com/@tiktok/video/%s", videoId))
+	req.URL.RawQuery = q.Encode()
+
+	req.Header.Add("X-RapidAPI-Key", t.APIKey)
+	req.Header.Add("X-RapidAPI-Host", t.APIHost)
+
+	t.RateLimit.Take()
+	res, err := t.HttpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer res.Body.Close()
+	body, _ := io.ReadAll(res.Body)
+
+	var response Response[GetVideoData]
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return nil, err

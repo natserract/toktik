@@ -1,7 +1,7 @@
 package dtos
 
-import "github.com/natserract/toktik/internal/feeds/models"
+import "github.com/natserract/toktik/pkg/scraper"
 
 type GetFeedByIdResponseDto struct {
-	Data models.Feed `json:"data"`
+	Data *scraper.VideoInfo `json:"data"`
 }

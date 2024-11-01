@@ -29,9 +29,9 @@ func (c *SearchFeedsHandler) Handle(
 	err := c.Store.Feeds.GetFeeds(query.Keywords, &videos)
 	if err != nil {
 		cfg := config.GetConfig()
-
 		s := scraper.NewScraper(cfg.RapidApiKey, cfg.RapiApiHost)
-		feeds, err := s.SearchVideos(scraper.SearchVideoParams{
+
+		feeds, err := s.SearchVideos(scraper.SearchVideosParams{
 			Keywords: query.Keywords,
 			Count:    query.Count,
 			Region:   "us",
@@ -42,7 +42,7 @@ func (c *SearchFeedsHandler) Handle(
 
 		videos = &feeds.Data.Videos
 
-		// Store the result
+		// Store to the cache
 		if err := c.Store.Feeds.SetFeeds(query.Keywords, videos); err != nil {
 			return nil, err
 		}

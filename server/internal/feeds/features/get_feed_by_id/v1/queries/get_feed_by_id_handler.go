@@ -2,9 +2,10 @@ package queries
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/gofrs/uuid"
 	"github.com/natserract/toktik/internal/feeds/features/get_feed_by_id/v1/dtos"
+	"github.com/natserract/toktik/pkg/config"
 	"github.com/natserract/toktik/pkg/scraper"
 
 	"github.com/natserract/toktik/shared/store"
@@ -24,23 +25,53 @@ func (c *GetFeedByIdHandler) Handle(
 	ctx context.Context,
 	query *GetFeedById,
 ) (*dtos.GetFeedByIdResponseDto, error) {
-	// var result *dtos.GetFeedByIdResponseDto
+	var result *scraper.VideoInfo
 
 	// Cached
 	iterator := c.Store.Feeds.Cache.Iterator()
 	for iterator.SetNext() {
 		current, err := iterator.Value()
-
 		if err != nil {
-			fmt.Println(err)
+			return nil, err
 		}
 
-		var retrievedData *[]scraper.VideoInfo
-		c.Store.Feeds.GetFeeds(current.Key(), &retrievedData)
+		var videos *[]scraper.VideoInfo
+		c.Store.Feeds.GetFeeds(current.Key(), &videos)
 
-		fmt.Println(current.Key())
-		fmt.Println(retrievedData)
+		// Find feed in cache
+		for _, video := range *videos {
+			if video.ID == query.Id || video.VideoID == query.Id {
+				result = &video
+			}
+		}
 	}
 
-	return &dtos.GetFeedByIdResponseDto{}, nil
+	// Otherwise fetch by Id (video_id)
+	// Then append to the existing feed caches
+	if result == nil {
+		cfg := config.GetConfig()
+		s := scraper.NewScraper(cfg.RapidApiKey, cfg.RapiApiHost)
+
+		feed, err := s.GetVideo(query.Id)
+		if err != nil {
+			return nil, err
+		}
+
+		result = feed.Data.VideoInfo
+
+		// Store to the cache
+		var videos []scraper.VideoInfo
+		videos = append(videos, *result)
+
+		uuid, err := uuid.NewV4()
+		if err != nil {
+			return nil, err
+		}
+
+		if err := c.Store.Feeds.SetFeeds(uuid.String(), videos); err != nil {
+			return nil, err
+		}
+	}
+
+	return &dtos.GetFeedByIdResponseDto{Data: result}, nil
 }
