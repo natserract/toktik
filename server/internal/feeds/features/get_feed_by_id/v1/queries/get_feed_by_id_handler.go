@@ -42,6 +42,7 @@ func (c *GetFeedByIdHandler) Handle(
 		for _, video := range *videos {
 			if video.ID == query.Id || video.VideoID == query.Id {
 				result = &video
+				break
 			}
 		}
 	}

@@ -6,8 +6,8 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/natserract/toktik/internal/feeds/contracts/params"
+	getFeedById "github.com/natserract/toktik/internal/feeds/features/get_feed_by_id/v1/queries"
 	"github.com/natserract/toktik/internal/feeds/features/streams/v1/dtos"
-	"github.com/natserract/toktik/internal/feeds/features/streams/v1/queries"
 )
 
 type streamsEndpoint struct {
@@ -41,25 +41,25 @@ func (ep *streamsEndpoint) handler() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, "error in the binding request")
 		}
 
-		query := queries.Streams{
+		q := getFeedById.NewGetFeedByIdHandler(ep.Store)
+		feed, err := q.Handle(ctx, &getFeedById.GetFeedById{
 			Id: request.Id,
-		}
-		if err := query.Validate(); err != nil {
-			return c.String(http.StatusBadRequest, "query validation failed")
+		})
+		if err != nil {
+			return err
 		}
 
-		stream := queries.NewStreamsHandler()
-		streamReq, err := stream.Handle(ctx, &query)
+		req, err := http.NewRequest("GET", feed.Data.Play, nil)
 		if err != nil {
-			return c.String(http.StatusBadRequest, "error in sending SearchFeeds")
+			return err
 		}
 
 		rangeHeader := c.Request().Header.Get("Range")
 		if rangeHeader != "" {
-			streamReq.Header.Set("Range", rangeHeader)
+			req.Header.Set("Range", rangeHeader)
 		}
 
-		resp, err := http.DefaultClient.Do(streamReq)
+		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
 			return c.String(http.StatusInternalServerError, "Failed to retrieve remote video")
 		}
@@ -75,6 +75,10 @@ func (ep *streamsEndpoint) handler() echo.HandlerFunc {
 		c.Response().WriteHeader(resp.StatusCode)
 
 		// Serve the video data
-		return c.Stream(resp.StatusCode, resp.Header.Get("Content-Type"), resp.Body)
+		return c.Stream(
+			resp.StatusCode,
+			resp.Header.Get("Content-Type"),
+			resp.Body,
+		)
 	}
 }
