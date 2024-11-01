@@ -72,7 +72,7 @@ func (c *GetFeedByIdHandler) Handle(
 			return nil, err
 		}
 
-		key := c.inMemoryRepository.Store.Feeds.Key(store.GetFeedByIdActor, uuid.String())
+		key := c.inMemoryRepository.Instance().Key(store.GetFeedByIdActor, uuid.String())
 		if err := c.inMemoryRepository.SaveFeeds(key, &videos); err != nil {
 			return nil, err
 		}

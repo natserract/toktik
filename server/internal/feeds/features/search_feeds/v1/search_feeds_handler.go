@@ -24,7 +24,7 @@ func (c *SearchFeedsHandler) Handle(
 	ctx context.Context,
 	query *SearchFeeds,
 ) (*dtos.SearchFeedsResponseDTO, error) {
-	key := c.inMemoryRepository.Store.Feeds.Key(store.SearchFeedsActor, query.Keywords, query.Count)
+	key := c.inMemoryRepository.Instance().Key(store.SearchFeedsActor, query.Keywords, query.Count)
 	results, err := c.inMemoryRepository.GetAllFeeds(key)
 	if err != nil {
 		cfg := config.GetConfig()
