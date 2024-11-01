@@ -133,7 +133,11 @@ func (t *Scraper) SearchVideos(params SearchVideosParams) (*Response[SearchVideo
 	var response Response[SearchVideosData]
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to unmarshal JSON: %w", err)
+	}
+
+	if response.Code == -1 {
+		return nil, fmt.Errorf("server returned error: %s", response.Message)
 	}
 
 	return &response, nil
@@ -163,14 +167,21 @@ func (t *Scraper) GetVideo(videoId string) (*Response[GetVideoData], error) {
 	if err != nil {
 		return nil, err
 	}
-
 	defer res.Body.Close()
-	body, _ := io.ReadAll(res.Body)
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
 
 	var response Response[GetVideoData]
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to unmarshal JSON: %w", err)
+	}
+
+	if response.Code == -1 {
+		return nil, fmt.Errorf("server returned error: %s", response.Message)
 	}
 
 	return &response, nil

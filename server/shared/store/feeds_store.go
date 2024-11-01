@@ -21,9 +21,7 @@ func NewFeedsStore() (*FeedsStore, error) {
 		return nil, err
 	}
 
-	return &FeedsStore{
-		Cache: cache,
-	}, nil
+	return &FeedsStore{Cache: cache}, nil
 }
 
 func (c *FeedsStore) SetFeeds(key string, value interface{}) error {
