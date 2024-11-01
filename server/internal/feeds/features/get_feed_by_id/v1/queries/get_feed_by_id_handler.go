@@ -68,7 +68,7 @@ func (c *GetFeedByIdHandler) Handle(
 			return nil, err
 		}
 
-		key := c.Store.Feeds.Key(store.GetFeedsActor, uuid.String())
+		key := c.Store.Feeds.Key(store.GetFeedByIdActor, uuid.String())
 		if err := c.Store.Feeds.SetFeeds(key, videos); err != nil {
 			return nil, err
 		}

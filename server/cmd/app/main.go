@@ -21,7 +21,7 @@ import (
 )
 
 func main() {
-	// Used for serializing bigcache store
+	// Used for deserializing bigcache store
 	// https://stackoverflow.com/questions/21934730/gob-type-not-registered-for-interface-mapstringinterface
 	gob.Register([]interface{}{})
 	gob.Register(map[string]interface{}{})

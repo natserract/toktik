@@ -10,22 +10,24 @@ import (
 	"github.com/allegro/bigcache/v3"
 )
 
-type FeedsStore struct {
+type UserInterestsStore struct {
 	Cache *bigcache.BigCache
 }
 
-func NewFeedsStore() (*FeedsStore, error) {
-	config := bigcache.DefaultConfig(3 * time.Minute)
+func NewUserInterestsStore() (*UserInterestsStore, error) {
+	config := bigcache.Config{
+		LifeWindow: 100 * 365 * 24 * time.Hour, // 100 years
+	}
 
 	cache, err := bigcache.New(context.Background(), config)
 	if err != nil {
 		return nil, err
 	}
 
-	return &FeedsStore{Cache: cache}, nil
+	return &UserInterestsStore{Cache: cache}, nil
 }
 
-func (c *FeedsStore) SetFeeds(key string, value interface{}) error {
+func (c *UserInterestsStore) SetUserInterests(key string, value interface{}) error {
 	var buffer bytes.Buffer
 	encoder := gob.NewEncoder(&buffer)
 	if err := encoder.Encode(value); err != nil {
@@ -34,7 +36,7 @@ func (c *FeedsStore) SetFeeds(key string, value interface{}) error {
 	return c.Cache.Set(key, buffer.Bytes())
 }
 
-func (c *FeedsStore) GetFeeds(key string, dest interface{}) error {
+func (c *UserInterestsStore) GetUserInterests(key string, dest interface{}) error {
 	data, err := c.Cache.Get(key)
 	if err != nil {
 		return err
@@ -44,14 +46,14 @@ func (c *FeedsStore) GetFeeds(key string, dest interface{}) error {
 	return decoder.Decode(dest)
 }
 
-type FeedsStoreActor string
+type UserInterestsStoreActor string
 
 const (
-	SearchFeedsActor FeedsStoreActor = "search_feeds"
-	GetFeedByIdActor FeedsStoreActor = "get_feed_by_id"
+	SearchUserInterestsActor UserInterestsStoreActor = "search_user_interests"
+	WatchUserInterestsActor  UserInterestsStoreActor = "watch_user_interests"
 )
 
-func (c *FeedsStore) Key(actor FeedsStoreActor, params ...string) string {
+func (c *UserInterestsStore) Key(actor UserInterestsStoreActor, params ...string) string {
 	cacheKey := string(actor)
 
 	if len(params) > 0 {

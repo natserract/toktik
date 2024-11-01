@@ -1,12 +1,8 @@
 package store
 
 type Store struct {
-	// feedsCache                *bigcache.BigCache // Cache by search keywords
-	// feedsRecommendationsCache *bigcache.BigCache // Cache by user interaction/interest
-
-	// // Private
-	// _userInterestsCache *bigcache.BigCache // Collect by User Id
-	Feeds *FeedsStore
+	Feeds         *FeedsStore
+	UserInterests *UserInterestsStore
 }
 
 func NewStore() (*Store, error) {
@@ -15,5 +11,13 @@ func NewStore() (*Store, error) {
 		return nil, err
 	}
 
-	return &Store{ Feeds: feedsStore }, nil
+	userInterestsStore, err := NewUserInterestsStore()
+	if err != nil {
+		return nil, err
+	}
+
+	return &Store{
+		Feeds:         feedsStore,
+		UserInterests: userInterestsStore,
+	}, nil
 }
