@@ -16,7 +16,15 @@ type UserInterestsStore struct {
 
 func NewUserInterestsStore() (*UserInterestsStore, error) {
 	config := bigcache.Config{
+		Shards:     1024,                       // Number of cache shards
 		LifeWindow: 100 * 365 * 24 * time.Hour, // 100 years
+		// CleanWindow:        10 * time.Minute, // Interval for cleaning up expired entries
+		// MaxEntriesInWindow: 1000 * 10 * 60,   // Max entries in life window
+		// MaxEntrySize:       500,              // Max size of entry in bytes
+		Verbose: true,
+		// HardMaxCacheSize:   8192,             // Max size of cache in MB
+		// OnRemove:           nil,              // Callback fired when an entry is removed
+		// OnRemoveWithReason: nil,              // Callback fired when an entry is removed with a reason
 	}
 
 	cache, err := bigcache.New(context.Background(), config)
