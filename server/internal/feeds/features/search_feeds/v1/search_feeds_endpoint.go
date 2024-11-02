@@ -60,15 +60,19 @@ func (ep *searchFeedsEndpoint) handler() echo.HandlerFunc {
 		}
 
 		// Collect user keywords to user interests
+		var titles []string
+		for _, data := range queryResult.Data {
+			titles = append(titles, data.Title)
+		}
 		actor := ep.Store.UserInterests.Key(
 			store.SearchUserInterestsActor,
 			request.Keywords,
 			request.Count,
 		)
-		pageContent := searchFeedsHandler.ToPageContent(queryResult)
+
 		userInterestQuery := createUserInterestV1.CreateUserInterest{
-			Actor:       actor,
-			PageContent: pageContent,
+			Actor:        actor,
+			PageContents: titles,
 		}
 		if err = userInterestQuery.Validate(); err != nil {
 			return c.String(http.StatusBadRequest, "query validation failed")

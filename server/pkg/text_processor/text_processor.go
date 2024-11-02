@@ -3,7 +3,7 @@ package text_processor
 import (
 	"regexp"
 
-	"github.com/natserract/toktik/pkg/nlp/text_processor/unstructured"
+	"github.com/forPelevin/gomoji"
 )
 
 type CleanProcessor struct{}
@@ -22,7 +22,7 @@ func (cp *CleanProcessor) Clean(text string, processRule map[string]interface{})
 	text = re.ReplaceAllString(text, "")
 
 	// Remove emojis
-	text = unstructured.RemoveEmojis(text)
+	text = gomoji.RemoveEmojis(text)
 
 	rules, ok := processRule["rules"].(map[string]interface{})
 	if ok {

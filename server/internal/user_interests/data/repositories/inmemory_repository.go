@@ -14,26 +14,24 @@ func NewUserInterestsRepository(s *store.Store) UserInterestsRepository {
 
 type SaveModel struct {
 	ID          string
-	PageContent string
-	Metadata    interface{}
+	Tags        string
+	TagsVector  []float32
+	Title       string
+	TitleVector []float32
 }
 
-func (r *UserInterestsRepository) SaveUserInterest(id string, pageContent string, metadata interface{}) error {
-	if err := r.Store.UserInterests.SetUserInterests(id, &SaveModel{
-		ID:          id,
-		PageContent: pageContent,
-		Metadata:    metadata,
-	}); err != nil {
+func (r *UserInterestsRepository) SaveUserInterests(key string, data *[]SaveModel) error {
+	if err := r.Store.UserInterests.Save(key, data); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (r *UserInterestsRepository) GetUserInterests(key string) (*SaveModel, error) {
-	var results *SaveModel
+func (r *UserInterestsRepository) GetUserInterests(key string) (*[]SaveModel, error) {
+	var results *[]SaveModel
 
-	err := r.Store.UserInterests.GetUserInterests(key, &results)
+	err := r.Store.UserInterests.Get(key, &results)
 	if err != nil {
 		return nil, err
 	}

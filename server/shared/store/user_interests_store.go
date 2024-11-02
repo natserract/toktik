@@ -35,7 +35,7 @@ func NewUserInterestsStore() (*UserInterestsStore, error) {
 	return &UserInterestsStore{Cache: cache}, nil
 }
 
-func (c *UserInterestsStore) SetUserInterests(key string, value interface{}) error {
+func (c *UserInterestsStore) Save(key string, value interface{}) error {
 	var buffer bytes.Buffer
 	encoder := gob.NewEncoder(&buffer)
 	if err := encoder.Encode(value); err != nil {
@@ -44,7 +44,16 @@ func (c *UserInterestsStore) SetUserInterests(key string, value interface{}) err
 	return c.Cache.Set(key, buffer.Bytes())
 }
 
-func (c *UserInterestsStore) GetUserInterests(key string, dest interface{}) error {
+func (c *UserInterestsStore) Add(key string, value interface{}) error {
+	var buffer bytes.Buffer
+	encoder := gob.NewEncoder(&buffer)
+	if err := encoder.Encode(value); err != nil {
+		return err
+	}
+	return c.Cache.Append(key, buffer.Bytes())
+}
+
+func (c *UserInterestsStore) Get(key string, dest interface{}) error {
 	data, err := c.Cache.Get(key)
 	if err != nil {
 		return err

@@ -5,20 +5,19 @@ import (
 )
 
 type CreateUserMetadata struct {
-	Tags   string
-	Title  string
-	Author string
+	Tags  string
+	Title string
 }
 
 type CreateUserInterest struct {
-	Actor       string
-	PageContent string
+	Actor        string
+	PageContents []string
 }
 
 func (s *CreateUserInterest) Validate() error {
 	return validation.ValidateStruct(
 		s,
 		validation.Field(&s.Actor, validation.Required),
-		validation.Field(&s.PageContent, validation.Required),
+		validation.Field(&s.PageContents, validation.Required),
 	)
 }

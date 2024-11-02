@@ -15,6 +15,7 @@ type Configuration struct {
 	// Third party
 	RapidApiKey string
 	RapiApiHost string
+	OpenAIKey   string
 }
 
 func GetConfig() *Configuration {
@@ -39,10 +40,16 @@ func GetConfig() *Configuration {
 		return nil
 	}
 
+	openAIKey, err := env.GetEnv("OPENAI_KEY")
+	if err != nil {
+		return nil
+	}
+
 	return &Configuration{
 		Port:        port,
 		Host:        "localhost",
 		RapidApiKey: rapidApiKey,
 		RapiApiHost: rapidApiHost,
+		OpenAIKey:   openAIKey,
 	}
 }

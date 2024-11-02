@@ -16,7 +16,7 @@ func NewFeedsRepository(s *store.Store) FeedsRepository {
 }
 
 func (r *FeedsRepository) SaveFeeds(key string, videos *[]scraper.VideoInfo) error {
-	if err := r.Store.Feeds.SetFeeds(key, videos); err != nil {
+	if err := r.Store.Feeds.Save(key, videos); err != nil {
 		return err
 	}
 
@@ -26,7 +26,7 @@ func (r *FeedsRepository) SaveFeeds(key string, videos *[]scraper.VideoInfo) err
 func (r *FeedsRepository) GetFeeds(key string) (*[]scraper.VideoInfo, error) {
 	var results *[]scraper.VideoInfo
 
-	err := r.Store.Feeds.GetFeeds(key, &results)
+	err := r.Store.Feeds.Get(key, &results)
 	if err != nil {
 		return nil, err
 	}

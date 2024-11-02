@@ -25,7 +25,7 @@ func NewFeedsStore() (*FeedsStore, error) {
 	return &FeedsStore{Cache: cache}, nil
 }
 
-func (c *FeedsStore) SetFeeds(key string, value interface{}) error {
+func (c *FeedsStore) Save(key string, value interface{}) error {
 	var buffer bytes.Buffer
 	encoder := gob.NewEncoder(&buffer)
 	if err := encoder.Encode(value); err != nil {
@@ -34,7 +34,7 @@ func (c *FeedsStore) SetFeeds(key string, value interface{}) error {
 	return c.Cache.Set(key, buffer.Bytes())
 }
 
-func (c *FeedsStore) GetFeeds(key string, dest interface{}) error {
+func (c *FeedsStore) Get(key string, dest interface{}) error {
 	data, err := c.Cache.Get(key)
 	if err != nil {
 		return err

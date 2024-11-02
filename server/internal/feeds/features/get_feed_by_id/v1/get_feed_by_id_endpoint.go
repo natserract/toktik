@@ -63,8 +63,8 @@ func (ep *getFeedByIdEndpoint) handler() echo.HandlerFunc {
 		actor := ep.Store.UserInterests.Key(store.WatchUserInterestsActor, request.Id)
 		pageContent := getFeedByIdHandler.ToPageContent(queryResult)
 		userInterestQuery := createUserInterestV1.CreateUserInterest{
-			Actor:       actor,
-			PageContent: pageContent,
+			Actor:        actor,
+			PageContents: []string{pageContent},
 		}
 		if err = userInterestQuery.Validate(); err != nil {
 			return c.String(http.StatusBadRequest, "query validation failed")

@@ -6,6 +6,7 @@ require (
 	github.com/ahmetb/go-linq/v3 v3.2.0 // indirect
 	github.com/allegro/bigcache/v3 v3.1.0 // indirect
 	github.com/benbjohnson/clock v1.3.0 // indirect
+	github.com/forPelevin/gomoji v1.2.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
@@ -25,6 +26,7 @@ require (
 	github.com/mehdihadeli/go-mediatr v1.3.0 // indirect
 	github.com/petermattis/goid v0.0.0-20240813172612-4fcff4a6cae7 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/sasha-s/go-deadlock v0.3.5 // indirect
 	github.com/sashabaranov/go-openai v1.32.5 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
