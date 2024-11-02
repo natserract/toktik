@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -8,6 +9,8 @@ import (
 	"github.com/natserract/toktik/internal/feeds/contracts/params"
 	"github.com/natserract/toktik/internal/feeds/data/repositories"
 	"github.com/natserract/toktik/internal/feeds/features/get_feed_by_id/v1/dtos"
+	userInterestsRepo "github.com/natserract/toktik/internal/user_interests/data/repositories"
+	createUserInterest "github.com/natserract/toktik/internal/user_interests/features/create_user_interest/v1"
 )
 
 type getFeedByIdEndpoint struct {
@@ -48,11 +51,27 @@ func (ep *getFeedByIdEndpoint) handler() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, "query validation failed")
 		}
 
-		repo := repositories.NewFeedsRepository(ep.Store)
-		q := NewGetFeedByIdHandler(repo)
-		queryResult, err := q.Handle(ctx, &query)
+		feedsRepo := repositories.NewFeedsRepository(ep.Store)
+		getFeedByIdHandler := NewGetFeedByIdHandler(feedsRepo)
+		queryResult, err := getFeedByIdHandler.Handle(ctx, &query)
 		if err != nil {
 			return c.String(http.StatusBadRequest, "error in sending SearchFeeds")
+		}
+
+		// Collect user watched to user interests
+		userInterestsRepo := userInterestsRepo.NewUserInterestsRepository(ep.Store)
+		userInterestsHandler := createUserInterest.NewCreateUserInterestHandler(userInterestsRepo)
+		err = userInterestsHandler.Handle(ctx, &createUserInterest.CreateUserInterest{
+			PageContent: queryResult.Data.Title,
+			Metadata: createUserInterest.CreateUserMetadata{
+				VideoID:    queryResult.Data.VideoID,
+				Title:      queryResult.Data.Title,
+				AuthorName: queryResult.Data.Author.Nickname,
+				CreateTime: queryResult.Data.CreateTime,
+			},
+		})
+		if err != nil {
+			fmt.Println("error in collecting user interests", err)
 		}
 
 		return c.JSON(http.StatusOK, queryResult)

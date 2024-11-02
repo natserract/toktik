@@ -34,6 +34,6 @@ func (r *FeedsRepository) GetAllFeeds(key string) (*[]scraper.VideoInfo, error) 
 	return results, nil
 }
 
-func (r *FeedsRepository) Instance() *store.FeedsStore {
+func (r *FeedsRepository) DB() *store.FeedsStore {
 	return r.Store.Feeds
 }

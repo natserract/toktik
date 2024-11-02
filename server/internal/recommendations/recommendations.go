@@ -5,4 +5,4 @@
 // 3. Show Recommended Search keywords
 //
 */
-package user_interests
+package recommendations

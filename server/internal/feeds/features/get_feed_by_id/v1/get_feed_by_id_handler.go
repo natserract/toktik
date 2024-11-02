@@ -29,7 +29,7 @@ func (c *GetFeedByIdHandler) Handle(
 	var result *scraper.VideoInfo
 
 	// Cached
-	iterator := c.inMemoryRepository.Store.Feeds.Cache.Iterator()
+	iterator := c.inMemoryRepository.DB().Cache.Iterator()
 	for iterator.SetNext() {
 		current, err := iterator.Value()
 		if err != nil {
@@ -72,7 +72,7 @@ func (c *GetFeedByIdHandler) Handle(
 			return nil, err
 		}
 
-		key := c.inMemoryRepository.Instance().Key(store.GetFeedByIdActor, uuid.String())
+		key := c.inMemoryRepository.DB().Key(store.GetFeedByIdActor, uuid.String())
 		if err := c.inMemoryRepository.SaveFeeds(key, &videos); err != nil {
 			return nil, err
 		}

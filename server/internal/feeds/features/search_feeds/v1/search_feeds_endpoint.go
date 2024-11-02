@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -8,6 +9,8 @@ import (
 	"github.com/natserract/toktik/internal/feeds/contracts/params"
 	"github.com/natserract/toktik/internal/feeds/data/repositories"
 	"github.com/natserract/toktik/internal/feeds/features/search_feeds/v1/dtos"
+	userInterestsRepo "github.com/natserract/toktik/internal/user_interests/data/repositories"
+	createUserInterest "github.com/natserract/toktik/internal/user_interests/features/create_user_interest/v1"
 )
 
 type searchFeedsEndpoint struct {
@@ -48,11 +51,22 @@ func (ep *searchFeedsEndpoint) handler() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, "query validation failed")
 		}
 
-		repo := repositories.NewFeedsRepository(ep.Store)
-		q := NewSearchFeedsHandler(repo)
-		queryResult, err := q.Handle(ctx, &query)
+		feedsRepo := repositories.NewFeedsRepository(ep.Store)
+		searchFeedsHandler := NewSearchFeedsHandler(feedsRepo)
+		queryResult, err := searchFeedsHandler.Handle(ctx, &query)
 		if err != nil {
 			return c.String(http.StatusBadRequest, "error in sending SearchFeeds")
+		}
+
+		// Collect user keywords to user interests
+		userInterestsRepo := userInterestsRepo.NewUserInterestsRepository(ep.Store)
+		userInterestsHandler := createUserInterest.NewCreateUserInterestHandler(userInterestsRepo)
+		err = userInterestsHandler.Handle(ctx, &createUserInterest.CreateUserInterest{
+			PageContent: query.Keywords,
+			Metadata:    createUserInterest.CreateUserMetadata{},
+		})
+		if err != nil {
+			fmt.Println("error in collecting user interests", err)
 		}
 
 		return c.JSON(http.StatusOK, queryResult)
