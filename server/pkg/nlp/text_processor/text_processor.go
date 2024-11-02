@@ -2,6 +2,8 @@ package text_processor
 
 import (
 	"regexp"
+
+	"github.com/natserract/toktik/pkg/nlp/text_processor/unstructured"
 )
 
 type CleanProcessor struct{}
@@ -18,6 +20,9 @@ func (cp *CleanProcessor) Clean(text string, processRule map[string]interface{})
 	// Unicode U+FFFE
 	re = regexp.MustCompile(`\x{FFFE}`)
 	text = re.ReplaceAllString(text, "")
+
+	// Remove emojis
+	text = unstructured.RemoveEmojis(text)
 
 	rules, ok := processRule["rules"].(map[string]interface{})
 	if ok {

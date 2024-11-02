@@ -10,7 +10,8 @@ import (
 	"github.com/natserract/toktik/internal/feeds/data/repositories"
 	"github.com/natserract/toktik/internal/feeds/features/search_feeds/v1/dtos"
 	userInterestsRepo "github.com/natserract/toktik/internal/user_interests/data/repositories"
-	createUserInterest "github.com/natserract/toktik/internal/user_interests/features/create_user_interest/v1"
+	createUserInterestV1 "github.com/natserract/toktik/internal/user_interests/features/create_user_interest/v1"
+	"github.com/natserract/toktik/shared/store"
 )
 
 type searchFeedsEndpoint struct {
@@ -59,13 +60,23 @@ func (ep *searchFeedsEndpoint) handler() echo.HandlerFunc {
 		}
 
 		// Collect user keywords to user interests
+		actor := ep.Store.UserInterests.Key(
+			store.SearchUserInterestsActor,
+			request.Keywords,
+			request.Count,
+		)
+		pageContent := searchFeedsHandler.ToPageContent(queryResult)
+		userInterestQuery := createUserInterestV1.CreateUserInterest{
+			Actor:       actor,
+			PageContent: pageContent,
+		}
+		if err = userInterestQuery.Validate(); err != nil {
+			return c.String(http.StatusBadRequest, "query validation failed")
+		}
+
 		userInterestsRepo := userInterestsRepo.NewUserInterestsRepository(ep.Store)
-		userInterestsHandler := createUserInterest.NewCreateUserInterestHandler(userInterestsRepo)
-		err = userInterestsHandler.Handle(ctx, &createUserInterest.CreateUserInterest{
-			PageContent: query.Keywords,
-			Metadata:    createUserInterest.CreateUserMetadata{},
-		})
-		if err != nil {
+		userInterestsHandler := createUserInterestV1.NewCreateUserInterestHandler(userInterestsRepo)
+		if userInterestsHandler.Handle(ctx, userInterestQuery); err != nil {
 			fmt.Println("error in collecting user interests", err)
 		}
 

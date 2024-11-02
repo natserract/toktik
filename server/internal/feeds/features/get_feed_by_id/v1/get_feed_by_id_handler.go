@@ -2,6 +2,7 @@ package v1
 
 import (
 	"context"
+	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/natserract/toktik/internal/feeds/data/repositories"
@@ -79,4 +80,14 @@ func (c *GetFeedByIdHandler) Handle(
 	}
 
 	return &dtos.GetFeedByIdResponseDto{Data: result}, nil
+}
+
+func (c *GetFeedByIdHandler) ToPageContent(data *dtos.GetFeedByIdResponseDto) string {
+	if data == nil {
+		return ""
+	}
+
+	var builder strings.Builder
+	builder.WriteString(data.Data.Title)
+	return builder.String()
 }

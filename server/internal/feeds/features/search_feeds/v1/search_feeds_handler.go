@@ -2,6 +2,7 @@ package v1
 
 import (
 	"context"
+	"strings"
 
 	"github.com/natserract/toktik/internal/feeds/data/repositories"
 	"github.com/natserract/toktik/internal/feeds/features/search_feeds/v1/dtos"
@@ -51,4 +52,18 @@ func (c *SearchFeedsHandler) Handle(
 	}
 
 	return &dtos.SearchFeedsResponseDTO{Data: *results}, nil
+}
+
+func (c *SearchFeedsHandler) ToPageContent(data *dtos.SearchFeedsResponseDTO) string {
+	if data == nil {
+		return ""
+	}
+
+	var builder strings.Builder
+
+	for _, item := range data.Data {
+		builder.WriteString(item.Title)
+	}
+
+	return builder.String()
 }

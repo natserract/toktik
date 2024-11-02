@@ -5,21 +5,20 @@ import (
 )
 
 type CreateUserMetadata struct {
-	VideoID    string
-	Title      string
-	AuthorName string
-	CreateTime int64
+	Tags   string
+	Title  string
+	Author string
 }
 
 type CreateUserInterest struct {
+	Actor       string
 	PageContent string
-	Metadata    CreateUserMetadata
 }
 
 func (s *CreateUserInterest) Validate() error {
 	return validation.ValidateStruct(
 		s,
+		validation.Field(&s.Actor, validation.Required),
 		validation.Field(&s.PageContent, validation.Required),
-		validation.Field(&s.Metadata, validation.Required),
 	)
 }

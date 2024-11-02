@@ -10,7 +10,8 @@ import (
 	"github.com/natserract/toktik/internal/feeds/data/repositories"
 	"github.com/natserract/toktik/internal/feeds/features/get_feed_by_id/v1/dtos"
 	userInterestsRepo "github.com/natserract/toktik/internal/user_interests/data/repositories"
-	createUserInterest "github.com/natserract/toktik/internal/user_interests/features/create_user_interest/v1"
+	createUserInterestV1 "github.com/natserract/toktik/internal/user_interests/features/create_user_interest/v1"
+	"github.com/natserract/toktik/shared/store"
 )
 
 type getFeedByIdEndpoint struct {
@@ -59,18 +60,19 @@ func (ep *getFeedByIdEndpoint) handler() echo.HandlerFunc {
 		}
 
 		// Collect user watched to user interests
+		actor := ep.Store.UserInterests.Key(store.WatchUserInterestsActor, request.Id)
+		pageContent := getFeedByIdHandler.ToPageContent(queryResult)
+		userInterestQuery := createUserInterestV1.CreateUserInterest{
+			Actor:       actor,
+			PageContent: pageContent,
+		}
+		if err = userInterestQuery.Validate(); err != nil {
+			return c.String(http.StatusBadRequest, "query validation failed")
+		}
+
 		userInterestsRepo := userInterestsRepo.NewUserInterestsRepository(ep.Store)
-		userInterestsHandler := createUserInterest.NewCreateUserInterestHandler(userInterestsRepo)
-		err = userInterestsHandler.Handle(ctx, &createUserInterest.CreateUserInterest{
-			PageContent: queryResult.Data.Title,
-			Metadata: createUserInterest.CreateUserMetadata{
-				VideoID:    queryResult.Data.VideoID,
-				Title:      queryResult.Data.Title,
-				AuthorName: queryResult.Data.Author.Nickname,
-				CreateTime: queryResult.Data.CreateTime,
-			},
-		})
-		if err != nil {
+		userInterestsHandler := createUserInterestV1.NewCreateUserInterestHandler(userInterestsRepo)
+		if userInterestsHandler.Handle(ctx, userInterestQuery); err != nil {
 			fmt.Println("error in collecting user interests", err)
 		}
 
