@@ -23,7 +23,7 @@ func (r *FeedsRepository) SaveFeeds(key string, videos *[]scraper.VideoInfo) err
 	return nil
 }
 
-func (r *FeedsRepository) GetAllFeeds(key string) (*[]scraper.VideoInfo, error) {
+func (r *FeedsRepository) GetFeeds(key string) (*[]scraper.VideoInfo, error) {
 	var results *[]scraper.VideoInfo
 
 	err := r.Store.Feeds.GetFeeds(key, &results)

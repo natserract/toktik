@@ -18,7 +18,7 @@ type SaveModel struct {
 	Metadata    interface{}
 }
 
-func (r *UserInterestsRepository) Save(id string, pageContent string, metadata interface{}) error {
+func (r *UserInterestsRepository) SaveUserInterest(id string, pageContent string, metadata interface{}) error {
 	if err := r.Store.UserInterests.SetUserInterests(id, &SaveModel{
 		ID:          id,
 		PageContent: pageContent,
@@ -28,6 +28,17 @@ func (r *UserInterestsRepository) Save(id string, pageContent string, metadata i
 	}
 
 	return nil
+}
+
+func (r *UserInterestsRepository) GetUserInterests(key string) (*SaveModel, error) {
+	var results *SaveModel
+
+	err := r.Store.UserInterests.GetUserInterests(key, &results)
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }
 
 func (r *UserInterestsRepository) DB() *store.UserInterestsStore {

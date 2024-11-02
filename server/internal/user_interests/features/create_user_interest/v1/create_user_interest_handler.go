@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/gofrs/uuid"
 	"github.com/natserract/toktik/internal/user_interests/data/repositories"
 )
 
@@ -18,19 +17,40 @@ func NewCreateUserInterestHandler(r repositories.UserInterestsRepository) *Creat
 	}
 }
 
+const (
+	// # Temporary solution
+	//
+	// User interest cache stored by User Id / Name
+	// At this time, I don't provided user authentication mechanism for  a while
+	// So, just put my name as a User
+	Natserract = "natserract"
+)
+
 func (c *CreateUserInterestHandler) Handle(
 	ctx context.Context,
 	query *CreateUserInterest,
 ) error {
-	uuid, err := uuid.NewV4()
-	if err != nil {
+	if err := c.inMemoryRepository.SaveUserInterest(Natserract, query.PageContent, query.Metadata); err != nil {
 		return err
 	}
 
-	if err := c.inMemoryRepository.Save(uuid.String(), query.PageContent, query.Metadata); err != nil {
-		return err
+	iterator := c.inMemoryRepository.DB().Cache.Iterator()
+	for iterator.SetNext() {
+		current, err := iterator.Value()
+		if err != nil {
+			return err
+		}
+
+		userInterests, err := c.inMemoryRepository.GetUserInterests(current.Key())
+		if err != nil {
+			return err
+		}
+
+		// Preprocessing text
+		// Embedding
+		// Find feed in cache
+		fmt.Println("userInterests", userInterests)
 	}
-	fmt.Println(" query.PageContent", query.PageContent, query.Metadata)
 
 	return nil
 }

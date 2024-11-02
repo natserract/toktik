@@ -36,7 +36,7 @@ func (c *GetFeedByIdHandler) Handle(
 			return nil, err
 		}
 
-		videos, err := c.inMemoryRepository.GetAllFeeds(current.Key())
+		videos, err := c.inMemoryRepository.GetFeeds(current.Key())
 		if err != nil {
 			return nil, err
 		}

@@ -25,7 +25,7 @@ func (c *SearchFeedsHandler) Handle(
 	query *SearchFeeds,
 ) (*dtos.SearchFeedsResponseDTO, error) {
 	key := c.inMemoryRepository.DB().Key(store.SearchFeedsActor, query.Keywords, query.Count)
-	results, err := c.inMemoryRepository.GetAllFeeds(key)
+	results, err := c.inMemoryRepository.GetFeeds(key)
 	if err != nil {
 		cfg := config.GetConfig()
 		s := scraper.NewScraper(cfg.RapidApiKey, cfg.RapiApiHost)
