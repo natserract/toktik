@@ -68,7 +68,7 @@ type MusicInfo struct {
 	Cover    string `json:"cover"`
 	Author   string `json:"author"`
 	Original bool   `json:"original"`
-	Duration int    `json:"duration"`
+	Duration int    `json:"duration,omitempty"`
 	Album    string `json:"album"`
 }
 
@@ -88,9 +88,54 @@ type Author struct {
 
 type Response[T any] struct {
 	Code    int    `json:"code"`
-	Message string `json:"success"`
+	Message string `json:"msg"`
 	// ProcessedTime int    `json:"processed_time"`
 	Data T `json:"data,omitempty"`
+}
+
+type TrendingsParams struct {
+	Count  string
+	Region string
+}
+
+func (t *Scraper) Trendings(params TrendingsParams) (*Response[[]VideoInfo], error) {
+	url := fmt.Sprintf("https://%s/feed/list", t.APIHost)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	q := req.URL.Query()
+	q.Add("region", params.Region)
+	q.Add("count", params.Count)
+	req.URL.RawQuery = q.Encode()
+
+	req.Header.Add("X-RapidAPI-Key", t.APIKey)
+	req.Header.Add("X-RapidAPI-Host", t.APIHost)
+
+	t.RateLimit.Take()
+	res, err := t.HttpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var response Response[[]VideoInfo]
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal JSON: %w", err)
+	}
+
+	if response.Code == -1 {
+		return nil, fmt.Errorf("server returned error: %s", response.Message)
+	}
+
+	return &response, nil
 }
 
 type SearchVideosData struct {

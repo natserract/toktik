@@ -21,7 +21,6 @@ func (c *CreateUserInterestHandler) Handle(
 	ctx context.Context,
 	query CreateUserInterest,
 ) error {
-	// If already cached, doesn't need to create embeddings
 	_, err := c.inMemoryRepository.GetUserInterests(query.Actor)
 	if err != nil {
 		var pageContents []string

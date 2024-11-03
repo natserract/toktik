@@ -10,6 +10,7 @@ import (
 
 	"github.com/natserract/toktik/embedding"
 	"github.com/natserract/toktik/internal/user_interests_embedding/data/repositories"
+	userInterestsEmbeddingUtil "github.com/natserract/toktik/internal/user_interests_embedding/shared/util"
 	"github.com/natserract/toktik/pkg/text_processor"
 	"github.com/natserract/toktik/shared/util"
 )
@@ -89,9 +90,7 @@ func (c *CreateUserInterestEmbeddingHandler) Handle(
 		// Embeddings
 		for _, content := range query.PageContents {
 			// Split into 'Tags', 'Title', & 'Author'
-			textSplitted := c.textSplitter(content)
-
-			// var err error
+			textSplitted := userInterestsEmbeddingUtil.TextSplitter(content)
 
 			// Tags
 			cachedTagText := string("")
@@ -150,27 +149,4 @@ func (c *CreateUserInterestEmbeddingHandler) Handle(
 	}
 
 	return nil
-}
-
-func (c *CreateUserInterestEmbeddingHandler) textSplitter(input string) CreateUserInterestEmbeddingMetadata {
-	var authors []string
-	var tags []string
-	var titles []string
-
-	words := strings.Fields(input)
-
-	for _, word := range words {
-		if strings.HasPrefix(word, "@") {
-			authors = append(authors, word)
-		} else if strings.HasPrefix(word, "#") {
-			tags = append(tags, word)
-		} else {
-			titles = append(titles, word)
-		}
-	}
-
-	return CreateUserInterestEmbeddingMetadata{
-		Tags:   tags,
-		Titles: titles,
-	}
 }

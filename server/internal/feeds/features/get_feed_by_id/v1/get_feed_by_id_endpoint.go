@@ -59,7 +59,7 @@ func (ep *getFeedByIdEndpoint) handler() echo.HandlerFunc {
 			return c.String(http.StatusBadRequest, "error in sending SearchFeeds")
 		}
 
-		// Collect user watched to user interests
+		// Collect query results to user interests
 		actor := ep.Store.UserInterests.Key(store.WatchUserInterestsActor, request.Id)
 		pageContent := getFeedByIdHandler.ToPageContent(queryResult)
 		userInterestQuery := createUserInterestV1.CreateUserInterest{

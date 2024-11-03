@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -32,6 +33,7 @@ func (ep *getRecommendationEndpoint) handler() echo.HandlerFunc {
 		handler := NewGetRecommendationTagsHandler(repo)
 		queryResult, err := handler.Handle(ctx, nil)
 		if err != nil {
+			log.Println(err)
 			return c.String(http.StatusBadRequest, "error in sending GetRecommendations")
 		}
 		return c.JSON(http.StatusOK, queryResult)

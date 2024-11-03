@@ -62,9 +62,8 @@ func (ep *searchFeedsEndpoint) handler() echo.HandlerFunc {
 			return c.JSON(http.StatusOK, queryResult)
 		}
 
-		// Collect user keywords to user interests
+		// Collect query results to user interests
 		userInterestsRepo := userInterestsRepo.NewUserInterestsRepository(ep.Store)
-
 		var titles []string
 		for _, data := range queryResult.Data {
 			titles = append(titles, data.Title)
