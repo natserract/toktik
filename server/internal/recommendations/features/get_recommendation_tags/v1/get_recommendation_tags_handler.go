@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/natserract/toktik/embedding"
+	"github.com/natserract/toktik/internal/recommendations/features/get_recommendation_tags/v1/dtos"
 	"github.com/natserract/toktik/internal/user_interests_embedding/data/repositories"
 	"github.com/natserract/toktik/internal/user_interests_embedding/shared/util"
 )
@@ -23,26 +24,21 @@ func NewGetRecommendationTagsHandler(r repositories.UserInterestsEmbeddingReposi
 func (c *GetRecommendationTagsHandler) Handle(
 	ctx context.Context,
 	query interface{},
-) (interface{}, error) {
+) (*dtos.GetRecommendationsTagsResponseDTO, error) {
 	results, err := c.inMemoryRepository.GetAllUserInterestsEmbedding()
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
 
-	if results != nil {
-		embed := embedding.NewVectorEmbedding()
-
-		queryVector, err := embed.CreateVector("OBama", ctx)
+	embed := embedding.NewVectorEmbedding()
+	user_profile_vec, err := embed.LoadQueryVector("sample/user_profile.json")
+	if err == nil {
+		bestText, similarityScore, err := util.FindMostSimilar(user_profile_vec.Values, results, "tags")
 		if err != nil {
 			return nil, err
 		}
-
-		bestText, maxSimilarity, err := util.FindMostSimilar(queryVector, results, "tags")
-		if err != nil {
-			return nil, err
-		}
-		fmt.Println("Results", bestText, maxSimilarity)
+		fmt.Println("Found similarity: ", bestText, similarityScore)
 	}
 
 	return nil, nil
