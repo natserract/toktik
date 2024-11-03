@@ -58,6 +58,9 @@ func (ep *searchFeedsEndpoint) handler() echo.HandlerFunc {
 		if err != nil {
 			return c.String(http.StatusBadRequest, "error in sending SearchFeeds")
 		}
+		if len(queryResult.Data) == 0 {
+			return c.JSON(http.StatusOK, queryResult)
+		}
 
 		// Collect user keywords to user interests
 		userInterestsRepo := userInterestsRepo.NewUserInterestsRepository(ep.Store)
@@ -68,8 +71,8 @@ func (ep *searchFeedsEndpoint) handler() echo.HandlerFunc {
 		}
 		actor := ep.Store.UserInterests.Key(
 			store.SearchUserInterestsActor,
-			request.Keywords,
-			request.Count,
+			query.Keywords,
+			query.Count,
 		)
 		userInterestQuery := createUserInterestV1.CreateUserInterest{
 			Actor:        actor,

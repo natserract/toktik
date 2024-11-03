@@ -1,12 +1,14 @@
 package repositories
 
-import "github.com/natserract/toktik/shared/store"
+import (
+	"github.com/natserract/toktik/shared/store"
+)
 
 type UserInterestsEmbeddingRepository struct {
 	Store *store.Store
 }
 
-func NewUserInterestsEmebddingRepository(s *store.Store) UserInterestsEmbeddingRepository {
+func NewUserInterestsEmbeddingRepository(s *store.Store) UserInterestsEmbeddingRepository {
 	return UserInterestsEmbeddingRepository{
 		Store: s,
 	}
@@ -34,6 +36,28 @@ func (r *UserInterestsEmbeddingRepository) GetUserInterestsEmbedding(key string)
 	err := r.Store.UserInterestsEmbedding.Get(key, &results)
 	if err != nil {
 		return nil, err
+	}
+
+	return results, nil
+}
+
+func (r *UserInterestsEmbeddingRepository) GetAllUserInterestsEmbedding() ([]SaveUserInterestsEmbeddingModel, error) {
+	var results []SaveUserInterestsEmbeddingModel
+
+	iterator := r.Store.UserInterestsEmbedding.Cache.Iterator()
+	for iterator.SetNext() {
+		current, err := iterator.Value()
+		if err != nil {
+			return nil, err
+		}
+
+		var embeddings *[]SaveUserInterestsEmbeddingModel
+		err = r.Store.UserInterestsEmbedding.Get(current.Key(), &embeddings)
+		if err != nil {
+			return nil, err
+		}
+
+		results = append(results, *embeddings...)
 	}
 
 	return results, nil

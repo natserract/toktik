@@ -5,7 +5,7 @@ import (
 	"github.com/natserract/toktik/shared/store"
 )
 
-type RouteParams struct {
-	FeedsGroup *echo.Group `name:"feed-echo-group"`
-	Store      *store.Store
+type RecommendationsRouteParams struct {
+	RecommendationsGroup *echo.Group `name:"recommendations-echo-group"`
+	Store                *store.Store
 }

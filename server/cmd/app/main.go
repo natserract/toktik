@@ -14,6 +14,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/natserract/toktik/internal/feeds"
+	"github.com/natserract/toktik/internal/recommendations"
 	"github.com/natserract/toktik/jobs"
 	"github.com/natserract/toktik/pkg/config"
 	echoHttp "github.com/natserract/toktik/pkg/http"
@@ -62,8 +63,12 @@ func main() {
 			)
 		})
 	})
+
+	// Register routes
 	feeds := feeds.NewFeeds(store)
 	feeds.Mount(e)
+	recommendations := recommendations.NewRecommendations(store)
+	recommendations.Mount(e)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()

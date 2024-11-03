@@ -39,7 +39,7 @@ func task(s *store.Store) {
 	log.Println("Embedding jobs running... ")
 
 	userInterestsRepository := userInterestsRepo.NewUserInterestsRepository(s)
-	userInterestsEmbeddingRepository := userInterestsEmbeddingRepo.NewUserInterestsEmebddingRepository(s)
+	userInterestsEmbeddingRepository := userInterestsEmbeddingRepo.NewUserInterestsEmbeddingRepository(s)
 	userInterestsEmbeddingHandler := createUserInterestEmbeddingV1.NewCreateUserInterestEmbeddingHandler(userInterestsEmbeddingRepository)
 
 	iterator := s.UserInterests.Cache.Iterator()
@@ -61,7 +61,7 @@ func task(s *store.Store) {
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		log.Println("Embeddings succesfully stored")
 	}
+
+	log.Println("Embedding jobs finished...")
 }
