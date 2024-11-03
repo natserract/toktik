@@ -3,7 +3,6 @@ package v1
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -28,7 +27,7 @@ func NewCreateUserInterestEmbeddingHandler(r repositories.UserInterestsEmbedding
 const (
 	// If dev true, embeddings will load from local (sample/)
 	// Otherwise, generated from LLM
-	__DEV__ = true
+	__DEV__ = false
 )
 
 func (c *CreateUserInterestEmbeddingHandler) Handle(
@@ -64,14 +63,13 @@ func (c *CreateUserInterestEmbeddingHandler) Handle(
 		return nil
 	}
 
+	// Production mode
 	// If already cached, doesn't need to create embeddings
 	_, err := c.inMemoryRepository.GetUserInterestsEmbedding(query.Actor)
 	if err != nil {
 		var models []repositories.SaveUserInterestsEmbeddingModel
 		embed := embedding.NewVectorEmbedding()
 
-		// Production mode
-		// Clean text
 		cp := text_processor.CleanProcessor{}
 		processRule := map[string]interface{}{
 			"rules": map[string]interface{}{
@@ -88,41 +86,58 @@ func (c *CreateUserInterestEmbeddingHandler) Handle(
 			},
 		}
 
+		// Embeddings
 		for _, content := range query.PageContents {
-			text := cp.Clean(content, processRule)
-			if text == "" {
-				fmt.Println("error in clean text")
-			}
-
 			// Split into 'Tags', 'Title', & 'Author'
-			textSplitted := c.textSplitter(text)
-			textSplitted.Title = util.MaxSubstring(textSplitted.Title, 500)
+			textSplitted := c.textSplitter(content)
 
-			// Embeddings
+			// var err error
+
+			// Tags
+			cachedTagText := string("")
+			for _, tag := range textSplitted.Tags {
+				tagText := util.MaxSubstring(tag, 700)
+				tagsNormalized := cp.Clean(tagText, processRule)
+				if tagsNormalized != "" {
+					tagText = strings.ToLower(tagsNormalized)
+					cachedTagText += " " + tagText
+				}
+			}
+			log.Println("Create tags embedding...", query.Actor, cachedTagText)
 			var tagsVec []float32
-			var titleVec []float32
-			var err error
-
-			log.Println("Create embedding...", query.Actor, textSplitted.Title)
-			if textSplitted.Tags != "" {
-				tagsVec, err = embed.CreateVector(textSplitted.Tags, ctx)
+			if cachedTagText != "" {
+				tagsVec, err = embed.CreateVector(cachedTagText, ctx)
 				if err != nil {
 					log.Fatalf("Error creating tags embedding: %v", err)
 				}
+				log.Println("Embedding tags succesfully created")
 			}
 
-			if textSplitted.Title != "" {
-				titleVec, err = embed.CreateVector(textSplitted.Title, ctx)
+			// Titles
+			cachedTitleText := string("")
+			for _, title := range textSplitted.Titles {
+				titleText := util.MaxSubstring(title, 700)
+				titleNormalized := cp.Clean(titleText, processRule)
+				if titleNormalized != "" {
+					titleText = strings.ToLower(titleNormalized)
+					cachedTitleText += " " + titleText
+				}
+			}
+			var titleVec []float32
+			log.Println("Create titles embedding...", query.Actor, cachedTitleText)
+			if cachedTitleText != "" {
+				titleVec, err = embed.CreateVector(cachedTitleText, ctx)
 				if err != nil {
 					log.Fatalf("Error creating title embedding: %v", err)
 				}
+				log.Println("Embedding title succesfully created")
 			}
 
 			models = append(models, repositories.SaveUserInterestsEmbeddingModel{
 				ID:          query.Actor,
-				Tags:        textSplitted.Tags,
+				Tag:         strings.Join(textSplitted.Tags, " "),
 				TagsVector:  tagsVec,
-				Title:       textSplitted.Title,
+				Title:       strings.Join(textSplitted.Titles, " "),
 				TitleVector: titleVec,
 			})
 			log.Println("Embedding created succesfully")
@@ -140,23 +155,22 @@ func (c *CreateUserInterestEmbeddingHandler) Handle(
 func (c *CreateUserInterestEmbeddingHandler) textSplitter(input string) CreateUserInterestEmbeddingMetadata {
 	var authors []string
 	var tags []string
-	var title []string
+	var titles []string
 
 	words := strings.Fields(input)
 
 	for _, word := range words {
-		word = strings.ToLower(word)
 		if strings.HasPrefix(word, "@") {
 			authors = append(authors, word)
 		} else if strings.HasPrefix(word, "#") {
 			tags = append(tags, word)
 		} else {
-			title = append(title, word)
+			titles = append(titles, word)
 		}
 	}
 
 	return CreateUserInterestEmbeddingMetadata{
-		Tags:  strings.Join(tags, " "),
-		Title: strings.Join(title, " "),
+		Tags:   tags,
+		Titles: titles,
 	}
 }

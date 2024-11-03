@@ -33,7 +33,7 @@ func (s *Feeds) Mount(e contracts.EchoHttpServer) {
 			Store:      s.Store,
 		}
 
-		// Register feed endpoints
+		// Register endpoints
 		searchFeedsV1.NewSearchFeedsEndpoint(params).MapEndpoint()
 		getFeedByIdV1.NewGetFeedByIdEndpoint(params).MapEndpoint()
 		streamFeedsV1.NewStreamsEndpoint(params).MapEndpoint()

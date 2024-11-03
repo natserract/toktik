@@ -16,7 +16,7 @@ func NewUserInterestsEmbeddingRepository(s *store.Store) UserInterestsEmbeddingR
 
 type SaveUserInterestsEmbeddingModel struct {
 	ID          string
-	Tags        string
+	Tag         string
 	TagsVector  []float32
 	Title       string
 	TitleVector []float32

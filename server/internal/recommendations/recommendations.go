@@ -3,7 +3,7 @@ package recommendations
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/natserract/toktik/internal/recommendations/contracts/params"
-	getRecommendationTagsV1 "github.com/natserract/toktik/internal/recommendations/features/get_recommendation_tags/v1"
+	getRecommendationV1 "github.com/natserract/toktik/internal/recommendations/features/get_recommendation/v1"
 	"github.com/natserract/toktik/pkg/http/contracts"
 	"github.com/natserract/toktik/shared/store"
 )
@@ -25,7 +25,7 @@ func (s *Recommendations) Mount(e contracts.EchoHttpServer) {
 			Store:                s.Store,
 		}
 
-		// Register recommendations endpoints
-		getRecommendationTagsV1.NewGetRecommendationTagsEndpoint(params).MapEndpoint()
+		// Register endpoints
+		getRecommendationV1.NewGetRecommendationEndpoint(params).MapEndpoint()
 	})
 }

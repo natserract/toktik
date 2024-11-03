@@ -2,42 +2,91 @@ package util
 
 import (
 	"fmt"
-	"log"
+	"sort"
 
-	"github.com/natserract/toktik/embedding"
+	"github.com/khaibin/go-cosinesimilarity"
 	"github.com/natserract/toktik/internal/user_interests_embedding/data/repositories"
+	"github.com/natserract/toktik/shared/util"
 )
 
-func FindMostSimilar(queryVector []float32, models []repositories.SaveUserInterestsEmbeddingModel, vectorType string) (string, float32, error) {
-	var maxSimilarity float32
-	var bestText string
+func FindMostSimilar(queryVector []float32, models []repositories.SaveUserInterestsEmbeddingModel, threshold float64, vectorType string) ([]string, []float64, error) {
+	var similarityContent []string
+	var similarityScores []float64
 
-	embed := embedding.NewVectorEmbedding()
-	for _, model := range models {
-		var similarity float32
-		var err error
-
+	queryVector64 := util.Float32ToFloat64(queryVector)
+	for _, data := range models {
 		switch vectorType {
 		case "tags":
-			similarity, err = embed.CosineSimilarity(queryVector, model.TagsVector)
-			if err == nil && similarity > maxSimilarity {
-				maxSimilarity = similarity
-				bestText = model.Tags
+			tagVector := util.Float32ToFloat64(data.TagsVector)
+
+			// Ensure both vectors are non-empty and of the same length
+			if len(queryVector) == 0 || len(tagVector) == 0 || len(queryVector) != len(tagVector) {
+				continue
+			}
+
+			// Compute cosine similarity
+			similarityMatrix := cosinesimilarity.Compute(
+				[][]float64{queryVector64},
+				[][]float64{tagVector},
+			)
+			if len(similarityMatrix) > 0 && len(similarityMatrix[0]) > 0 {
+				similarity := similarityMatrix[0][0]
+				if similarity >= threshold {
+					similarityContent = append(similarityContent, data.Tag)
+					similarityScores = append(similarityScores, similarity)
+				}
 			}
 		case "title":
-			similarity, err = embed.CosineSimilarity(queryVector, model.TitleVector)
-			if err == nil && similarity > maxSimilarity {
-				maxSimilarity = similarity
-				bestText = model.Title
+			titleVector := util.Float32ToFloat64(data.TitleVector)
+
+			// Ensure both vectors are non-empty and of the same length
+			if len(queryVector) == 0 || len(titleVector) == 0 || len(queryVector) != len(titleVector) {
+				continue
+			}
+
+			// Compute cosine similarity
+			similarityMatrix := cosinesimilarity.Compute(
+				[][]float64{queryVector64},
+				[][]float64{titleVector},
+			)
+			if len(similarityMatrix) > 0 && len(similarityMatrix[0]) > 0 {
+				similarity := similarityMatrix[0][0]
+				if similarity >= threshold {
+					similarityContent = append(similarityContent, data.Title)
+					similarityScores = append(similarityScores, similarity)
+				}
 			}
 		default:
-			return "", 0, fmt.Errorf("unknown vector type: %s", vectorType)
-		}
-
-		if err != nil {
-			log.Printf("Error calculating similarity: %v", err)
+			return nil, nil, fmt.Errorf("unknown vector type: %s", vectorType)
 		}
 	}
 
-	return bestText, maxSimilarity, nil
+	similarityContent, similarityScores = sortSimilaritiesDescending(similarityContent, similarityScores)
+	return similarityContent, similarityScores, nil
+}
+
+type similarityPair struct {
+	content string
+	score   float64
+}
+
+func sortSimilaritiesDescending(similarityContent []string, similarityScores []float64) ([]string, []float64) {
+	// Create a slice of pairs
+	pairs := make([]similarityPair, len(similarityScores))
+	for i := range similarityScores {
+		pairs[i] = similarityPair{content: similarityContent[i], score: similarityScores[i]}
+	}
+
+	// Sort the pairs by score in descending order
+	sort.Slice(pairs, func(i, j int) bool {
+		return pairs[i].score > pairs[j].score
+	})
+
+	// Extract the sorted content and scores
+	for i, pair := range pairs {
+		similarityContent[i] = pair.content
+		similarityScores[i] = pair.score
+	}
+
+	return similarityContent, similarityScores
 }

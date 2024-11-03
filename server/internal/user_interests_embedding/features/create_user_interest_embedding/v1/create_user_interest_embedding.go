@@ -5,8 +5,8 @@ import (
 )
 
 type CreateUserInterestEmbeddingMetadata struct {
-	Tags  string
-	Title string
+	Tags   []string
+	Titles []string
 }
 
 type CreateUserInterestEmbedding struct {

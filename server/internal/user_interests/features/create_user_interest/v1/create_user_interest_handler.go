@@ -27,7 +27,7 @@ func (c *CreateUserInterestHandler) Handle(
 		var pageContents []string
 
 		for _, content := range query.PageContents {
-			pageContents = append(pageContents, util.MaxSubstring(content, 500))
+			pageContents = append(pageContents, util.MaxSubstring(content, 700))
 		}
 
 		// Store to the cache

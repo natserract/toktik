@@ -8,32 +8,32 @@ import (
 	"github.com/natserract/toktik/internal/user_interests_embedding/data/repositories"
 )
 
-type getRecommendationTagsEndpoint struct {
+type getRecommendationEndpoint struct {
 	params.RecommendationsRouteParams
 }
 
-func NewGetRecommendationTagsEndpoint(
+func NewGetRecommendationEndpoint(
 	params params.RecommendationsRouteParams,
-) *getRecommendationTagsEndpoint {
-	return &getRecommendationTagsEndpoint{
+) *getRecommendationEndpoint {
+	return &getRecommendationEndpoint{
 		RecommendationsRouteParams: params,
 	}
 }
 
-func (ep *getRecommendationTagsEndpoint) MapEndpoint() {
+func (ep *getRecommendationEndpoint) MapEndpoint() {
 	ep.RecommendationsGroup.GET("/tags", ep.handler())
 }
 
-func (ep *getRecommendationTagsEndpoint) handler() echo.HandlerFunc {
+func (ep *getRecommendationEndpoint) handler() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
+
 		repo := repositories.NewUserInterestsEmbeddingRepository(ep.Store)
 		handler := NewGetRecommendationTagsHandler(repo)
-		_, err := handler.Handle(ctx, nil)
+		queryResult, err := handler.Handle(ctx, nil)
 		if err != nil {
 			return c.String(http.StatusBadRequest, "error in sending GetRecommendations")
 		}
-
-		return c.JSON(http.StatusOK, "Okay")
+		return c.JSON(http.StatusOK, queryResult)
 	}
 }
