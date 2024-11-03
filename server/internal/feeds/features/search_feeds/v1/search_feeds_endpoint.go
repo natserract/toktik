@@ -60,6 +60,8 @@ func (ep *searchFeedsEndpoint) handler() echo.HandlerFunc {
 		}
 
 		// Collect user keywords to user interests
+		userInterestsRepo := userInterestsRepo.NewUserInterestsRepository(ep.Store)
+
 		var titles []string
 		for _, data := range queryResult.Data {
 			titles = append(titles, data.Title)
@@ -76,8 +78,6 @@ func (ep *searchFeedsEndpoint) handler() echo.HandlerFunc {
 		if err := userInterestQuery.Validate(); err != nil {
 			return c.String(http.StatusBadRequest, "query validation failed")
 		}
-
-		userInterestsRepo := userInterestsRepo.NewUserInterestsRepository(ep.Store)
 		userInterestsHandler := createUserInterestV1.NewCreateUserInterestHandler(userInterestsRepo)
 		err = userInterestsHandler.Handle(ctx, userInterestQuery)
 		if err != nil {

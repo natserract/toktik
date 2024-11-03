@@ -14,6 +14,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/natserract/toktik/internal/feeds"
+	"github.com/natserract/toktik/jobs"
 	"github.com/natserract/toktik/pkg/config"
 	echoHttp "github.com/natserract/toktik/pkg/http"
 	echoHttpOptions "github.com/natserract/toktik/pkg/http/config"
@@ -45,6 +46,9 @@ func main() {
 	if err != nil {
 		e.GetEchoInstance().Logger.Fatal(err)
 	}
+
+	// Register jobs
+	jobs.NewJobs(store)
 
 	e.GetEchoInstance().Logger.SetLevel(2)
 	e.SetupDefaultMiddlewares()
