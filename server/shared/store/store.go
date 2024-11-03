@@ -1,8 +1,9 @@
 package store
 
 type Store struct {
-	Feeds         *FeedsStore
-	UserInterests *UserInterestsStore
+	Feeds                  *FeedsStore
+	UserInterests          *UserInterestsStore
+	UserInterestsEmbedding *UserInterestsEmbeddingStore
 }
 
 func NewStore() (*Store, error) {
@@ -16,8 +17,14 @@ func NewStore() (*Store, error) {
 		return nil, err
 	}
 
+	userInterestsEmbeddingStore, err := NewUserInterestsEmbeddingStore()
+	if err != nil {
+		return nil, err
+	}
+
 	return &Store{
-		Feeds:         feedsStore,
-		UserInterests: userInterestsStore,
+		Feeds:                  feedsStore,
+		UserInterests:          userInterestsStore,
+		UserInterestsEmbedding: userInterestsEmbeddingStore,
 	}, nil
 }

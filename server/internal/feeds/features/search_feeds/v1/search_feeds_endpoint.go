@@ -69,18 +69,18 @@ func (ep *searchFeedsEndpoint) handler() echo.HandlerFunc {
 			request.Keywords,
 			request.Count,
 		)
-
 		userInterestQuery := createUserInterestV1.CreateUserInterest{
 			Actor:        actor,
 			PageContents: titles,
 		}
-		if err = userInterestQuery.Validate(); err != nil {
+		if err := userInterestQuery.Validate(); err != nil {
 			return c.String(http.StatusBadRequest, "query validation failed")
 		}
 
 		userInterestsRepo := userInterestsRepo.NewUserInterestsRepository(ep.Store)
 		userInterestsHandler := createUserInterestV1.NewCreateUserInterestHandler(userInterestsRepo)
-		if userInterestsHandler.Handle(ctx, userInterestQuery); err != nil {
+		err = userInterestsHandler.Handle(ctx, userInterestQuery)
+		if err != nil {
 			fmt.Println("error in collecting user interests", err)
 		}
 

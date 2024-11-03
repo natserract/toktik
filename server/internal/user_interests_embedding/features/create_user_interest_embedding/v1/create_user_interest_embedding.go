@@ -4,12 +4,17 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation"
 )
 
-type CreateUserInterest struct {
+type CreateUserInterestEmbeddingMetadata struct {
+	Tags  string
+	Title string
+}
+
+type CreateUserInterestEmbedding struct {
 	Actor        string
 	PageContents []string
 }
 
-func (s *CreateUserInterest) Validate() error {
+func (s *CreateUserInterestEmbedding) Validate() error {
 	return validation.ValidateStruct(
 		s,
 		validation.Field(&s.Actor, validation.Required),
