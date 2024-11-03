@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
+	"github.com/natserract/toktik/config"
 	"github.com/natserract/toktik/internal/feeds/data/repositories"
 	"github.com/natserract/toktik/internal/feeds/features/get_feed_by_id/v1/dtos"
-	"github.com/natserract/toktik/pkg/config"
 	"github.com/natserract/toktik/pkg/scraper"
 
 	"github.com/natserract/toktik/shared/store"

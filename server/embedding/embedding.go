@@ -8,8 +8,8 @@ import (
 	"math"
 	"os"
 
+	"github.com/natserract/toktik/config"
 	"github.com/natserract/toktik/model"
-	"github.com/natserract/toktik/pkg/config"
 	"github.com/sashabaranov/go-openai"
 )
 

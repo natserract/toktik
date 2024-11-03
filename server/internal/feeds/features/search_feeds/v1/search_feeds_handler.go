@@ -4,9 +4,9 @@ import (
 	"context"
 	"strings"
 
+	"github.com/natserract/toktik/config"
 	"github.com/natserract/toktik/internal/feeds/data/repositories"
 	"github.com/natserract/toktik/internal/feeds/features/search_feeds/v1/dtos"
-	"github.com/natserract/toktik/pkg/config"
 	"github.com/natserract/toktik/pkg/scraper"
 	"github.com/natserract/toktik/shared/store"
 )

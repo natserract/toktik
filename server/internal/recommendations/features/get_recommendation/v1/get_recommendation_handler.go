@@ -5,11 +5,11 @@ import (
 	"log"
 	"strings"
 
+	"github.com/natserract/toktik/config"
 	"github.com/natserract/toktik/embedding"
 	"github.com/natserract/toktik/internal/recommendations/features/get_recommendation/v1/dtos"
 	"github.com/natserract/toktik/internal/user_interests_embedding/data/repositories"
 	"github.com/natserract/toktik/internal/user_interests_embedding/shared/util"
-	"github.com/natserract/toktik/pkg/config"
 	"github.com/natserract/toktik/pkg/scraper"
 	helper "github.com/natserract/toktik/shared/util"
 )
