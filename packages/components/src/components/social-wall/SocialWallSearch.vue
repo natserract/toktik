@@ -19,7 +19,6 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { RouterView } from 'vue-router'
 
 const props = defineProps<{
   // Customizable placeholder text for the search input.
@@ -43,7 +42,7 @@ const filteredSuggestions = computed(() => {
   return suggestions.value.filter((suggestion) => suggestion.toLowerCase().includes(lowerCaseQuery))
 })
 
-const onInput = (e) => {
+const onInput = (e: any) => {
   props.onSearch(e)
   showSuggestions.value = true
 }

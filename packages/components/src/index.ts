@@ -19,4 +19,4 @@ customElements.define('social-wall-search', SocialWallSearchElement)
 customElements.define('social-wall-videos', SocialWallVideosElement)
 customElements.define('social-wall-tags', SocialWallTagsElement)
 
-export { SocialWall, SocialWallSearch, SocialWallResults, SocialWallTags }
+export { SocialWall, SocialWallSearch, SocialWallVideos, SocialWallTags }

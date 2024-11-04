@@ -5,16 +5,9 @@ import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    App: typeof import('./src/App.vue')['default']
     ComponentsSocialWallSocialWall: typeof import('./src/components/social-wall/SocialWall.vue')['default']
-    ComponentsSocialWallSocialWallDetail: typeof import('./src/components/social-wall/SocialWallDetail.vue')['default']
-    ComponentsSocialWallSocialWallDialog: typeof import('./src/components/social-wall/SocialWallDialog.vue')['default']
-    ComponentsSocialWallSocialWallResultItem: typeof import('./src/components/social-wall/SocialWallResultItem.vue')['default']
-    ComponentsSocialWallSocialWallResults: typeof import('./src/components/social-wall/SocialWallResults.vue')['default']
-    ComponentsSocialWallSocialWallRouter: typeof import('./src/components/social-wall/SocialWallRouter.vue')['default']
     ComponentsSocialWallSocialWallSearch: typeof import('./src/components/social-wall/SocialWallSearch.vue')['default']
     ComponentsSocialWallSocialWallTags: typeof import('./src/components/social-wall/SocialWallTags.vue')['default']
-    ComponentsSocialWallSocialWallVideo: typeof import('./src/components/social-wall/SocialWallVideo.vue')['default']
     ComponentsSocialWallSocialWallVideos: typeof import('./src/components/social-wall/SocialWallVideos.vue')['default']
     ComponentsSocialWallSocialWallVideoView: typeof import('./src/components/social-wall/SocialWallVideoView.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
