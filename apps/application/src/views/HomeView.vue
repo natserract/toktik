@@ -1,4 +1,3 @@
-
 <template>
   <main>
     <div class="video-container">

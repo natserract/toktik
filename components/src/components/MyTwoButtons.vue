@@ -1,34 +1,20 @@
-<script setup lang="ts">
-
-const props = defineProps({
-  countDefault: {
-    type: String,
-    default: '1000',
-  },
-});
-
-const count = ref(parseInt(props.countDefault));
-
-</script>
-
 <script lang="ts">
-import { ref } from 'vue';
+import { ref } from 'vue'
 
-const count2 = ref(0);
+const count2 = ref(0)
 
 export default {
   setup() {
-  
+    //
   },
   methods: {
     clicked() {
-      const delta:number = 2;
-      count2.value += delta;
+      const delta: number = 2
+      count2.value += delta
       console.log(`Called, method clicked() ${count2.value}`)
-      
     },
-  }  
-};
+  },
+}
 </script>
 
 <template>
@@ -49,7 +35,7 @@ export default {
 
 <style>
 button {
-  background-color: #4CAF50; /* Green */
+  background-color: #4caf50; /* Green */
   border: none;
   color: white;
   padding: 15px 32px;
