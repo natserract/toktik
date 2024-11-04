@@ -38,32 +38,7 @@ export default defineConfig({
     DefineOptions(),
   ],
   build: {
-    outDir: 'dist',
-    lib: {
-      entry: path.resolve(dirname, 'src/index.ts'),
-      name: 'components',
-      formats: ['es', 'cjs'],
-    },
-    sourcemap: true,
-    rollupOptions: {
-      // manualChunks: (id) => {
-      //   if (id.includes('node_modules')) {
-      //     return 'vendor';
-      //   }
-      //   // return path.parse(id).name;
-      // },
-      external: ['vue'],
-      input: ['src/index.ts'],
-      output: {
-        // minifyInternalExports: false,
-        // chunkFileNames: '[name].js',
-        // Provide global variables to use in the UMD build
-        // for externalized deps
-        globals: {
-          vue: 'Vue',
-        },
-      },
-    },
+    outDir: 'dist/web-components',
   },
   resolve: {
     alias: {

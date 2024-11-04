@@ -1,3 +1,4 @@
 packages:
   - 'apps/application/**'
   - 'components/**'
+  - 'examples/customization-support/**'
