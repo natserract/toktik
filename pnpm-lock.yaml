@@ -12,7 +12,7 @@ importers:
         specifier: ^7.1.6
         version: 7.1.6
 
-  apps/application1:
+  apps/application:
     dependencies:
       '@toktik/components':
         specifier: workspace:*
@@ -1809,7 +1809,7 @@ packages:
     dev: true
 
   /util-deprecate@1.0.2:
-    resolution: {integrity: sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=}
+    resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: true
 
   /v8-compile-cache@2.3.0:
