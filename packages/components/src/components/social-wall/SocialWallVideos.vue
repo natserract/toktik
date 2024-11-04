@@ -18,9 +18,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import VLazyImage from 'v-lazy-image'
 import SocialWallVideoView from '@components/social-wall/SocialWallVideoView.vue'
+import videosAPI from '@apis/videos'
 
 const props = defineProps<{
   id?: string
@@ -78,6 +79,18 @@ const videos = ref([
     thumbnail: 'https://cdn-images-1.medium.com/max/1600/1*xjGrvQSXvj72W4zD6IWzfg.jpeg',
   },
 ])
+
+const posts = ref([])
+
+const fetchPosts = async () => {
+  try {
+    const response = await videosAPI.listPosts()
+    console.log(response)
+  } catch (error) {
+    console.error('Error fetching posts:', error)
+  }
+}
+onMounted(fetchPosts)
 </script>
 
 <style>

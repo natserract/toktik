@@ -1,5 +1,5 @@
 import './style.css'
-import { createApp, defineCustomElement } from 'vue'
+import { defineCustomElement } from 'vue'
 
 // Components
 import SocialWall from '@/components/social-wall/SocialWall.vue'

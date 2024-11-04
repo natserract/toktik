@@ -21,6 +21,7 @@
     "sourceMap": true,
     "paths": {
       "@": ["src/*"],
+      "@apis/*": ["src/apis/*"],
       "@components/*": ["src/components/*"]
     },
     "types": ["vite/client"],
