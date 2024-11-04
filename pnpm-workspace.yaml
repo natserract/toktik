@@ -1,4 +1,4 @@
 packages:
   - 'apps/application/**'
-  - 'components/**'
+  - 'packages/*'
   - 'examples/customization-support/**'
