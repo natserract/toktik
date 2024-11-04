@@ -97,6 +97,9 @@ importers:
         specifier: ^3.2.36
         version: 3.2.36
     devDependencies:
+      '@types':
+        specifier: link:@types
+        version: link:@types
       '@vitejs/plugin-vue':
         specifier: ^2.3.3
         version: 2.3.3(vite@2.9.9)(vue@3.2.36)
@@ -121,6 +124,9 @@ importers:
       unplugin-vue-define-options:
         specifier: ^1.5.2
         version: 1.5.2(vue@3.2.36)
+      v-lazy-image:
+        specifier: ^2.1.1
+        version: 2.1.1
       vite:
         specifier: ^2.9.9
         version: 2.9.9(sass@1.52.1)
@@ -2817,6 +2823,10 @@ packages:
 
   /util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
+    dev: true
+
+  /v-lazy-image@2.1.1:
+    resolution: {integrity: sha512-QC6Jcok99CRhhsO7svfI3hcBaT945dSuaHk3jr7WHm+QJMzbB/f32xKkdF45qL5ezd5KeoqHKh4gD92mQtjfXQ==}
     dev: true
 
   /v8-compile-cache@2.3.0:
