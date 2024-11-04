@@ -6,6 +6,12 @@ import '@vue/runtime-core'
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     ComponentsSearchSearchInput: typeof import('./src/components/search/SearchInput.vue')['default']
+    ComponentsSocialWallSocialWall: typeof import('./src/components/social-wall/SocialWall.vue')['default']
+    ComponentsSocialWallSocialWallContainer: typeof import('./src/components/social-wall/SocialWallContainer.vue')['default']
+    ComponentsSocialWallSocialWallHeader: typeof import('./src/components/social-wall/SocialWallHeader.vue')['default']
+    ComponentsSocialWallSocialWallResults: typeof import('./src/components/social-wall/SocialWallResults.vue')['default']
+    ComponentsSocialWallSocialWallSearch: typeof import('./src/components/social-wall/SocialWallSearch.vue')['default']
+    ComponentsSocialWallSocialWallTags: typeof import('./src/components/social-wall/SocialWallTags.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

@@ -5,7 +5,7 @@ import Components from 'unplugin-vue-components/vite'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import DefineOptions from 'unplugin-vue-define-options/vite'
-
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -21,10 +21,11 @@ export default defineConfig({
   plugins: [
     vue({
       style: {
-        filename: './style.css',
+        filename: 'style.css',
       },
       customElement: true,
     }),
+    cssInjectedByJsPlugin(),
     Components({
       dirs: ['src'],
       extensions: ['vue'],

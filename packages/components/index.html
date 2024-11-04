@@ -3,15 +3,24 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vite + Vue 3.2 + Web Component</title>
 </head>
 
 <body>
-  <search-input>
-  </search-input>
-  <script type="module" src="/src/index.ts"></script>
+    <social-wall>
+      <div class="flex">
+        <div class="w-1/5 bg-red w-full">
+          <social-wall-tags></social-wall-tags>
+        </div>
+
+        <div class="w-4/5">
+          <social-wall-search></social-wall-search>
+        <social-wall-results></social-wall-results>
+        </div>
+      </div>
+    </social-wall>
 </body>
 
+<script type="module" src="/src/index.ts"></script>
 </html>
