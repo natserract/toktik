@@ -8,19 +8,42 @@
 </head>
 
 <body>
- <social-wall>
+ <social-wall theme="light" layout="grid">
     <div class="flex">
       <div class="w-1/5 bg-red">
-        <social-wall-tags></social-wall-tags>
+        <social-wall-tags id="social-wall-tags" ontagclick=""></social-wall-tags>
       </div>
 
       <div class="w-4/5">
-        <social-wall-search></social-wall-search>
-        <social-wall-results></social-wall-results>
+        <social-wall-search
+          id="social-wall-search"
+          placeholder="Search..."
+          debounce-time="200"
+          on-search=""
+        >
+        </social-wall-search>
+        <social-wall-videos id="social-wall-videos" grid-layout="grid" max-videos="20" controls autoplay on-play="" on-pause=""></social-wall-videos>
       </div>
     </div>
   </social-wall>
 </body>
+
+<script type="text/javascript">
+  // Social wall search
+  const socialWallSearch = document.getElementById('social-wall-search');
+  function handleSearch(e) {
+    console.log('onSearch:', e.target.value);
+  }
+  socialWallSearch.onSearch = handleSearch;
+
+  // Social wall tags
+  const socialWallTags = document.getElementById('social-wall-tags');
+  function handleOnTagClick(e) {
+    console.log('onTagClick:', e);
+  }
+  socialWallTags.onTagClick = handleOnTagClick;
+
+</script>
 
 <script type="module" src="/src/index.ts"></script>
 </html>

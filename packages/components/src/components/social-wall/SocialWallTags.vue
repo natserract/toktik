@@ -16,6 +16,11 @@
 <script setup lang="ts">
 import { createApp, h, ref } from 'vue'
 
+const props = defineProps<{
+  // Callback function triggered when a tag is clicked, allowing custom tag-based filtering.
+  onTagClick: (tag: string) => void
+}>()
+
 // Sample data for tags
 const tags = ref<string[]>(['JavaScript', 'Vue.js', 'React', 'Angular', 'TypeScript', 'Node.js', 'CSS', 'HTML'])
 
@@ -24,6 +29,8 @@ const selectedTags = ref<string[]>([])
 
 // Method to toggle tag selection
 const toggleTag = (tag: string) => {
+  props.onTagClick && props.onTagClick(tag)
+
   const index = selectedTags.value.indexOf(tag)
   if (index === -1) {
     selectedTags.value.push(tag)

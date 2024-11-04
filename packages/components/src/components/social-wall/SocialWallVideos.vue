@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-md mx-auto overflow-y-auto h-screen">
+  <div :id="props.id ? props.id : ''" class="max-w-md mx-auto overflow-y-auto h-screen">
     <div v-for="(video, index) in videos" :key="index" class="bg-white rounded-lg shadow-md overflow-hidden" @click="openModal(video)">
       <v-lazy-image
         :src="video.thumbnail"
@@ -14,15 +14,30 @@
     </div>
   </div>
 
-  <SocialWallDialog :is-open="isModalOpen" @update:isOpen="isModalOpen = $event" />
+  <SocialWallVideoView :is-open="isModalOpen" @update:isOpen="isModalOpen = $event" />
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import VLazyImage from 'v-lazy-image'
-import SocialWallDialog from '@components/social-wall/SocialWallDialog.vue'
+import SocialWallVideoView from '@components/social-wall/SocialWallVideoView.vue'
 
-const open = ref(false)
+const props = defineProps<{
+  id?: string
+  // Sets the maximum number of videos to fetch and display at a time.
+  maxVideos: number
+  // Defines the layout of the videos (e.g., grid, masonry, or carousel).
+  gridLayout: 'grid' | 'masonry' | 'carousel'
+  // Boolean to show or hide playback controls like play, pause, and volume.
+  controls?: boolean
+  // Callback for custom handling of video play events.
+  onPlay?: (videoId: string) => void
+  // Callback for custom handling of video pause events.
+  onPause?: (videoId: string) => void
+  // Enables or disables autoplay on scroll into view for each video.
+  autoplay?: boolean
+}>()
+
 const isModalOpen = ref(false)
 
 function openModal(video: any) {
@@ -31,7 +46,7 @@ function openModal(video: any) {
 }
 
 // Sample data for videos
-const videos = [
+const videos = ref([
   {
     title: 'Vue.js Basics',
     description: 'Learn the basics of Vue.js in this introductory video.',
@@ -62,14 +77,7 @@ const videos = [
     description: 'Learn how to deploy your Vue.js applications.',
     thumbnail: 'https://cdn-images-1.medium.com/max/1600/1*xjGrvQSXvj72W4zD6IWzfg.jpeg',
   },
-]
-
-const items = ref(
-  videos.map((v, idx) => ({
-    ...v,
-    id: idx,
-  }))
-)
+])
 </script>
 
 <style>

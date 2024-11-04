@@ -21,6 +21,15 @@
 import { ref, computed } from 'vue'
 import { RouterView } from 'vue-router'
 
+const props = defineProps<{
+  // Customizable placeholder text for the search input.
+  placeholder: string
+  // Delay time in milliseconds before search results are fetched.
+  debounceTime: number
+  // Callback function to handle the search query input by the user.
+  onSearch: (query: string) => void
+}>()
+
 const query = ref('')
 const showSuggestions = ref(false)
 
@@ -34,7 +43,8 @@ const filteredSuggestions = computed(() => {
   return suggestions.value.filter((suggestion) => suggestion.toLowerCase().includes(lowerCaseQuery))
 })
 
-const onInput = () => {
+const onInput = (e) => {
+  props.onSearch(e)
   showSuggestions.value = true
 }
 

@@ -14,6 +14,9 @@ declare module '@vue/runtime-core' {
     ComponentsSocialWallSocialWallRouter: typeof import('./src/components/social-wall/SocialWallRouter.vue')['default']
     ComponentsSocialWallSocialWallSearch: typeof import('./src/components/social-wall/SocialWallSearch.vue')['default']
     ComponentsSocialWallSocialWallTags: typeof import('./src/components/social-wall/SocialWallTags.vue')['default']
+    ComponentsSocialWallSocialWallVideo: typeof import('./src/components/social-wall/SocialWallVideo.vue')['default']
+    ComponentsSocialWallSocialWallVideos: typeof import('./src/components/social-wall/SocialWallVideos.vue')['default']
+    ComponentsSocialWallSocialWallVideoView: typeof import('./src/components/social-wall/SocialWallVideoView.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
