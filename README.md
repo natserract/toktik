@@ -72,7 +72,7 @@ pnpm app:dev
 
 (See [examples](/examples)) 
 
-## Snapshot
+## Screenshot
 
 ![Demo](/public/demo.png "demo v1")
 
