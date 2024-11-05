@@ -1,9 +1,9 @@
 // Get
 import { z } from 'zod'
 
-export const GetResponseSchema = z.object({
+export const GetAllResponseSchema = z.object({
   data: z.object({
     tags: z.array(z.string()),
   }),
 })
-export type GetResponse = z.infer<typeof GetResponseSchema>
+export type GetAllResponse = z.infer<typeof GetAllResponseSchema>

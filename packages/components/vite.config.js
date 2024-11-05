@@ -66,6 +66,7 @@ export default defineConfig({
       '@': path.resolve(dirname, './src'),
       '@apis': path.resolve(dirname, './src/apis'),
       '@components': path.resolve(dirname, './src/components'),
+      '@utils': path.resolve(dirname, './src/utils'),
       '@contracts': path.resolve(dirname, '../contracts/src/'),
     },
     dedupe: ['vue', '@vue/runtime-core'],

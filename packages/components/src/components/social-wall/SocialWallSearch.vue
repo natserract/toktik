@@ -1,63 +1,84 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import videosAPI from '@apis/feeds'
+import { useSocialWallContext } from '@components/social-wall/context'
+import recommendationsAPI from '@apis/recommendations'
+import debounce from '@utils/debounce'
+
+const props = defineProps<{
+  placeholder: string
+  debounceTime: number
+  onSearch: (query: string) => void
+}>()
+
+const query = ref('')
+const context = useSocialWallContext()
+
+const fetchVideos = async (query: string, count = 10) => {
+  try {
+    context.state.feeds.loading = true
+    return await videosAPI.searchVideos(query, count)
+  } catch (err: any) {
+    context.state.feeds.error = err.message
+    console.error('Error fetching feeds:', err)
+  } finally {
+    await fetchRecommendationTags()
+    context.state.feeds.loading = false
+  }
+}
+
+const fetchRecommendationTags = async () => {
+  try {
+    const response = await recommendationsAPI.listTags()
+    context.setTags(response.data.tags)
+  } catch (err: any) {
+    context.state.tags.error = err.message
+    console.error('Error fetching tags:', err)
+  } finally {
+    context.state.tags.loading = false
+  }
+}
+
+const onInput = async () => {
+  props.onSearch(query.value)
+
+  try {
+    if (query.value.length > 2) {
+      const videos = await fetchVideos(query.value)
+      if (videos) {
+        context.setFeeds(videos.data)
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching feeds:', error)
+  }
+}
+const debouncedOnInput = debounce(onInput, props.debounceTime)
+
+const onEnter = async (e: any) => {
+  try {
+    const videos = await fetchVideos(e.target.value)
+    if (videos) {
+      context.setFeeds(videos.data)
+    }
+  } catch (error) {
+    console.error('Error fetching feeds:', error)
+  }
+}
+</script>
+
 <template>
   <div class="relative w-full max-w-md mx-auto">
     <input
       v-model="query"
       type="text"
       class="w-full p-2 border border-gray-300 rounded"
-      placeholder="Search..."
-      @input="onInput"
-      @focus="showSuggestions = true"
-      @blur="hideSuggestions"
+      :placeholder="props.placeholder ? props.placeholder : 'Search...'"
+      @input="debouncedOnInput"
+      @keydown.enter="onEnter"
     />
-    <ul v-if="showSuggestions && filteredSuggestions.length" class="absolute z-10 w-full bg-white border border-gray-300 rounded shadow-lg">
-      <li v-for="(suggestion, index) in filteredSuggestions" :key="index" class="p-2 hover:bg-gray-100 cursor-pointer" @mousedown.prevent="selectSuggestion(suggestion)">
-        {{ suggestion }}
-      </li>
-    </ul>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, computed } from 'vue'
-
-const props = defineProps<{
-  // Customizable placeholder text for the search input.
-  placeholder: string
-  // Delay time in milliseconds before search results are fetched.
-  debounceTime: number
-  // Callback function to handle the search query input by the user.
-  onSearch: (query: string) => void
-}>()
-
-const query = ref('')
-const showSuggestions = ref(false)
-
-const suggestions = ref<string[]>(['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig', 'Grape', 'Honeydew'])
-
-const filteredSuggestions = computed(() => {
-  if (!query.value) {
-    return []
-  }
-  const lowerCaseQuery = query.value.toLowerCase()
-  return suggestions.value.filter((suggestion) => suggestion.toLowerCase().includes(lowerCaseQuery))
-})
-
-const onInput = (e: any) => {
-  props.onSearch(e)
-  showSuggestions.value = true
-}
-
-const hideSuggestions = () => {
-  setTimeout(() => {
-    showSuggestions.value = false
-  }, 100)
-}
-
-const selectSuggestion = (suggestion: string) => {
-  query.value = suggestion
-  showSuggestions.value = false
-}
-</script>
 
 <style>
 @import url('@/style.css');

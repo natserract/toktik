@@ -1,27 +1,26 @@
-import axios, { type AxiosError } from 'axios'
-import { type AxiosCacheInstance, type CacheAxiosResponse, type InternalCacheRequestConfig, setupCache } from 'axios-cache-interceptor'
+import axios, { type AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import { ENDPOINTS } from '../constants/endpoints'
 
 type ObjectValue<T> = T[keyof T]
 type Endpoint = ObjectValue<typeof ENDPOINTS>
 
 export class BaseClient {
-  private api: AxiosCacheInstance
+  static BASE_URL = 'http://localhost:8080/api/v1'
+
+  private api: AxiosInstance
 
   constructor() {
-    this.api = setupCache(
-      axios.create({
-        baseURL: 'http://localhost:8080/api/v1',
-      })
-    )
+    this.api = axios.create({
+      baseURL: BaseClient.BASE_URL,
+    })
 
     this.api.interceptors.request.use(
-      (config: InternalCacheRequestConfig) => config,
+      (config: InternalAxiosRequestConfig) => config,
       (error: AxiosError<string>) => Promise.reject(error)
     )
 
     this.api.interceptors.response.use(
-      (response: CacheAxiosResponse) => response,
+      (response: AxiosResponse) => response,
       (error: AxiosError<string>) => Promise.reject(error)
     )
   }
@@ -38,11 +37,11 @@ export class BaseClient {
     ).data
   }
 
-  protected async getListResource(endpoint: Endpoint, offset = 0, limit = 20): Promise<any> {
+  protected async getListResource<T>(endpoint: Endpoint, offset = 0, limit = 20): Promise<T> {
     if (offset < 0 || limit < 0) {
-      return (await this.api.get<any>(`${endpoint}`)).data
+      return (await this.api.get<T>(`${endpoint}`)).data
     }
 
-    return (await this.api.get<any>(`${endpoint}?offset=${offset}&limit=${limit}`)).data
+    return (await this.api.get<T>(`${endpoint}?offset=${offset}&limit=${limit}`)).data
   }
 }

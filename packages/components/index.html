@@ -8,10 +8,10 @@
 </head>
 
 <body>
- <social-wall theme="light" layout="grid">
+ <social-wall>
     <div class="flex">
       <div class="w-1/5 bg-red">
-        <social-wall-tags id="social-wall-tags" ontagclick=""></social-wall-tags>
+        <social-wall-tags id="social-wall-tags"></social-wall-tags>
       </div>
 
       <div class="w-4/5">
@@ -19,10 +19,10 @@
           id="social-wall-search"
           placeholder="Search..."
           debounce-time="200"
-          on-search=""
         >
         </social-wall-search>
-        <social-wall-videos id="social-wall-videos" grid-layout="grid" max-videos="20" controls autoplay on-play="" on-pause=""></social-wall-videos>
+
+        <social-wall-videos id="social-wall-videos"></social-wall-videos>
       </div>
     </div>
   </social-wall>
@@ -32,7 +32,7 @@
   // Social wall search
   const socialWallSearch = document.getElementById('social-wall-search');
   function handleSearch(e) {
-    console.log('onSearch:', e.target.value);
+    console.log('onSearch:', e);
   }
   socialWallSearch.onSearch = handleSearch;
 
@@ -43,6 +43,16 @@
   }
   socialWallTags.onTagClick = handleOnTagClick;
 
+  // Social Wall Videos
+  const socialWallVideos = document.getElementById('social-wall-videos');
+  function handleOnPlay(videoId) {
+    console.log('onPlay from html', videoId);
+  }
+  function handleOnPause(videoId) {
+    console.log('onPause from html', videoId);
+  }
+  socialWallVideos.onPlay = handleOnPlay;
+  socialWallVideos.onPause = handleOnPause;
 </script>
 
 <script type="module" src="/src/index.ts"></script>

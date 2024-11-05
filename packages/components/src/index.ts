@@ -7,6 +7,9 @@ import SocialWallSearch from '@/components/social-wall/SocialWallSearch.vue'
 import SocialWallVideos from '@/components/social-wall/SocialWallVideos.vue'
 import SocialWallTags from '@/components/social-wall/SocialWallTags.vue'
 
+// Low level api
+import { useSocialWallContext } from './components/social-wall/context'
+
 // Define custom elements
 const SocialWallElement = defineCustomElement(SocialWall)
 const SocialWallSearchElement = defineCustomElement(SocialWallSearch)
@@ -19,4 +22,4 @@ customElements.define('social-wall-search', SocialWallSearchElement)
 customElements.define('social-wall-videos', SocialWallVideosElement)
 customElements.define('social-wall-tags', SocialWallTagsElement)
 
-export { SocialWall, SocialWallSearch, SocialWallVideos, SocialWallTags }
+export { SocialWall, SocialWallSearch, SocialWallVideos, SocialWallTags, useSocialWallContext }

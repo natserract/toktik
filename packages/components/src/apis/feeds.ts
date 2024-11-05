@@ -14,6 +14,10 @@ export class VideosAPI extends BaseClient {
     return this.getResource(ENDPOINTS.FEEDS, id)
   }
 
+  public getStreamVideoUrl(id: string): string {
+    return `${BaseClient.BASE_URL}${ENDPOINTS.FEEDS}/${id}/stream`
+  }
+
   public async getStreamVideoById(id: string): Promise<any> {
     return this.getResource(`${ENDPOINTS.FEEDS}/stream`, id)
   }

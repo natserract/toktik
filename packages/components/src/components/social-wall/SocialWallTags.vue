@@ -1,44 +1,74 @@
-<template>
-  <div class="w-full max-w-md mx-auto">
-    <div class="flex flex-wrap items-center">
-      <button
-        v-for="(tag, index) in tags"
-        :key="index"
-        :class="['m-1 px-3 py-1 rounded-full text-sm font-medium', selectedTags.includes(tag) ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300']"
-        @click="toggleTag(tag)"
-      >
-        {{ tag }}
-      </button>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { createApp, h, ref } from 'vue'
+import { onMounted, computed, ref } from 'vue'
+import recommendationsAPI from '@apis/recommendations'
+import videosAPI from '@apis/feeds'
+import { useSocialWallContext } from '@components/social-wall/context'
+import AsyncDataComponent from '@components/AsyncDataComponent.vue'
 
 const props = defineProps<{
-  // Callback function triggered when a tag is clicked, allowing custom tag-based filtering.
+  id?: string
   onTagClick: (tag: string) => void
 }>()
 
-// Sample data for tags
-const tags = ref<string[]>(['JavaScript', 'Vue.js', 'React', 'Angular', 'TypeScript', 'Node.js', 'CSS', 'HTML'])
+const context = useSocialWallContext()
+const tags = computed(() => context.getTags())
+const loading = computed(() => context.state.tags.loading)
+const error = computed(() => !!context.state.tags.error)
 
-// Reactive state to track selected tags
-const selectedTags = ref<string[]>([])
-
-// Method to toggle tag selection
-const toggleTag = (tag: string) => {
+const onClick = async (tag: string) => {
   props.onTagClick && props.onTagClick(tag)
 
-  const index = selectedTags.value.indexOf(tag)
-  if (index === -1) {
-    selectedTags.value.push(tag)
-  } else {
-    selectedTags.value.splice(index, 1)
+  const videos = await fetchVideosByTag(tag)
+  if (videos) {
+    context.setFeeds(videos.data)
   }
 }
+
+const fetchVideosByTag = async (tag: string) => {
+  try {
+    context.state.feeds.loading = true
+    return await videosAPI.searchVideos(tag, 5)
+  } catch (err: any) {
+    context.state.feeds.error = err.message
+    console.error('Error fetching feeds:', error)
+  } finally {
+    context.state.feeds.loading = false
+  }
+}
+
+const fetchRecommendationTags = async () => {
+  try {
+    const response = await recommendationsAPI.listTags()
+    context.setTags(response.data.tags)
+  } catch (err: any) {
+    context.state.tags.error = err.message
+    console.error('Error fetching tags:', err)
+  } finally {
+    context.state.tags.loading = false
+  }
+}
+
+if (context.getTags().length === 0) {
+  onMounted(fetchRecommendationTags)
+}
 </script>
+
+<template>
+  <AsyncDataComponent :loading="loading" :error="error">
+    <div :id="props.id ? props.id : ''" class="w-full max-w-md mx-auto">
+      <div class="flex flex-wrap items-center">
+        <button
+          v-for="(tag, index) in tags"
+          :key="index"
+          :class="['m-1 px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-800 hover:bg-gray-300']"
+          @click="onClick(tag)"
+        >
+          {{ tag }}
+        </button>
+      </div>
+    </div>
+  </AsyncDataComponent>
+</template>
 
 <style>
 @import url('@/style.css');

@@ -32,20 +32,18 @@
     "lint": "eslint --ext .ts,.vue src/"
   },
   "dependencies": {
-    "@videojs-player/vue": "^1.0.0",
     "axios": "^1.7.7",
-    "axios-cache-interceptor": "^1.6.2",
     "clsx": "^2.1.1",
     "sass": "^1.52.1",
-    "video.js": "^8.19.1",
-    "vue": "^3.2.36"
+    "vue": "^3.2.36",
+    "vue-loading-skeleton": "2.0.0-beta.1"
   },
   "peerDependencies": {
     "vue": "3.2.36"
   },
   "devDependencies": {
-    "@types": "link:@types",
     "@toktik/contracts": "workspace:*",
+    "@types": "link:@types",
     "@vitejs/plugin-vue": "^2.3.3",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.16.0",

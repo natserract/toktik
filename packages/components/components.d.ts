@@ -5,11 +5,12 @@ import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    ComponentsAsyncDataComponent: typeof import('./src/components/AsyncDataComponent.vue')['default']
     ComponentsSocialWallSocialWall: typeof import('./src/components/social-wall/SocialWall.vue')['default']
     ComponentsSocialWallSocialWallSearch: typeof import('./src/components/social-wall/SocialWallSearch.vue')['default']
     ComponentsSocialWallSocialWallTags: typeof import('./src/components/social-wall/SocialWallTags.vue')['default']
+    ComponentsSocialWallSocialWallVideoPlayer: typeof import('./src/components/social-wall/SocialWallVideoPlayer.vue')['default']
     ComponentsSocialWallSocialWallVideos: typeof import('./src/components/social-wall/SocialWallVideos.vue')['default']
-    ComponentsSocialWallSocialWallVideoView: typeof import('./src/components/social-wall/SocialWallVideoView.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

@@ -1,16 +1,17 @@
 <template>
-  <div id="social-wall">
+  <div :id="`social-wall ${props.id ? props.id : ''}`">
     <slot />
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  // Defines the theme of the social wall (e.g., 'light' or 'dark') for customization.
-  theme: 'light' | 'dark'
-  // Specifies the layout style for displaying videos (e.g., 'grid' or 'list').
-  layout: 'grid' | 'list'
+import { provideSocialWallContext } from '@components/social-wall/context'
+
+const props = defineProps<{
+  id?: string
 }>()
+
+provideSocialWallContext()
 </script>
 
 <style>
