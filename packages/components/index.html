@@ -28,32 +28,5 @@
   </social-wall>
 </body>
 
-<script type="text/javascript">
-  // Social wall search
-  const socialWallSearch = document.getElementById('social-wall-search');
-  function handleSearch(e) {
-    console.log('onSearch:', e);
-  }
-  socialWallSearch.onSearch = handleSearch;
-
-  // Social wall tags
-  const socialWallTags = document.getElementById('social-wall-tags');
-  function handleOnTagClick(e) {
-    console.log('onTagClick:', e);
-  }
-  socialWallTags.onTagClick = handleOnTagClick;
-
-  // Social Wall Videos
-  const socialWallVideos = document.getElementById('social-wall-videos');
-  function handleOnPlay(videoId) {
-    console.log('onPlay from html', videoId);
-  }
-  function handleOnPause(videoId) {
-    console.log('onPause from html', videoId);
-  }
-  socialWallVideos.onPlay = handleOnPlay;
-  socialWallVideos.onPause = handleOnPause;
-</script>
-
 <script type="module" src="/src/index.ts"></script>
 </html>

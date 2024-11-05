@@ -1,4 +1,5 @@
 import './style.css'
+import 'vue-loading-skeleton/dist/style.css'
 import { defineCustomElement } from 'vue'
 
 // Components

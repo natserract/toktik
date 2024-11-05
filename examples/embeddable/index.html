@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Document</title>
-
 </head>
 <body>
+
 <social-wall>
   <social-wall-tags id="social-wall-tags"></social-wall-tags>
   <social-wall-search
@@ -18,5 +18,32 @@
   <social-wall-videos id="social-wall-videos"></social-wall-videos>
 </social-wall>
 </body>
+
+<script type="text/javascript">
+  // Social wall search
+  const socialWallSearch = document.getElementById('social-wall-search');
+  function handleSearch(e) {
+    console.log('onSearch:', e);
+  }
+  socialWallSearch.onSearch = handleSearch;
+
+  // Social wall tags
+  const socialWallTags = document.getElementById('social-wall-tags');
+  function handleOnTagClick(e) {
+    console.log('onTagClick:', e);
+  }
+  socialWallTags.onTagClick = handleOnTagClick;
+
+  // Social Wall Videos
+  const socialWallVideos = document.getElementById('social-wall-videos');
+  function handleOnPlay(videoId) {
+    console.log('onPlay from html', videoId);
+  }
+  function handleOnPause(videoId) {
+    console.log('onPause from html', videoId);
+  }
+  socialWallVideos.onPlay = handleOnPlay;
+  socialWallVideos.onPause = handleOnPause;
+</script>
 <script src="./dist/web-components/assets/index.70a9d52a.js"></script>
 </html>

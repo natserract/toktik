@@ -7,7 +7,7 @@ import debounce from '@utils/debounce'
 
 const props = defineProps<{
   placeholder: string
-  debounceTime: number
+  debounceTime?: number
   onSearch?: (query: string) => void
 }>()
 
@@ -53,7 +53,7 @@ const onInput = async () => {
     console.error('Error fetching feeds:', error)
   }
 }
-const debouncedOnInput = debounce(onInput, props.debounceTime)
+const debouncedOnInput = debounce(onInput, props.debounceTime || 300)
 
 const onEnter = async (e: any) => {
   try {
