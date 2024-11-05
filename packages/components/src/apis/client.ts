@@ -30,9 +30,9 @@ export class BaseClient {
     return (await this.api.get<T>(`${endpoint}/${identifier || identifier === 0 ? identifier : ''}`)).data
   }
 
-  protected async getResources<T>(endpoint: string, params: object = {}): Promise<T[]> {
+  protected async getResources<T>(endpoint: string, params: object = {}): Promise<T> {
     return (
-      await this.api.get<T[]>(endpoint, {
+      await this.api.get<T>(endpoint, {
         params: { ...params },
       })
     ).data

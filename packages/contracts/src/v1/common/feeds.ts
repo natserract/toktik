@@ -25,7 +25,7 @@ const AuthorSchema = z.object({
   avatar: z.string(),
 })
 
-export const VideoAttributesSchema = z.object({
+export const FeedsAttributesSchema = z.object({
   id: z.string().optional(),
   aweme_id: z.string(),
   video_id: z.string(),
@@ -58,4 +58,4 @@ export const VideoAttributesSchema = z.object({
   is_top: z.number(),
 })
 
-export type VideoAttributes = z.infer<typeof VideoAttributesSchema>
+export type FeedsAttributes = z.infer<typeof FeedsAttributesSchema>

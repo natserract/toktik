@@ -64,7 +64,7 @@ func (c *GetRecommendationKeywordsHandler) Handle(
 
 		return &dtos.GetRecommendationsResponseDTO{
 			Data: dtos.GetRecommendationsData{
-				Titles: helper.SafeSubslice(titles, 3),
+				Keywords: helper.SafeSubslice(titles, 3),
 			},
 		}, nil
 	}
@@ -99,7 +99,7 @@ func (c *GetRecommendationKeywordsHandler) Handle(
 		log.Println("Found title similarities: ", titles, titleSimilarityScores)
 		result = &dtos.GetRecommendationsResponseDTO{
 			Data: dtos.GetRecommendationsData{
-				Titles: helper.SafeSubslice(titles, 3),
+				Keywords: helper.SafeSubslice(titles, 3),
 			},
 		}
 	}

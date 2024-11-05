@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import VLazyImage from 'v-lazy-image'
 
 import SocialWallVideoView from '@components/social-wall/SocialWallVideoView.vue'
-import videosAPI from '@apis/videos'
+import videosAPI from '@apis/feeds'
 
 const props = defineProps<{
   id?: string

@@ -1,4 +1,4 @@
 export const ENDPOINTS = {
-  VIDEOS: '/feeds',
+  FEEDS: '/feeds',
   RECOMMENDATIONS: '/recommendations',
 }
