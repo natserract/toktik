@@ -1,50 +1,39 @@
+<script setup lang="ts">
+import { SocialWall, SocialWallTags, SocialWallVideos, SocialWallSearch } from '@toktik/components'
+import { defineComponent } from 'vue'
+
+defineComponent({
+  components: {
+    'social-wall': SocialWall,
+    'social-wall-search': SocialWallSearch,
+    'social-wall-tags': SocialWallTags,
+    'social-wall-videos': SocialWallVideos,
+  },
+})
+</script>
+
 <template>
-  <main>
-    <div class="video-container">
-      <h1>Video Streaming Example</h1>
-      <video ref="videoPlayer" controls width="600" :src="videoSrc" @play="onPlay" @pause="onPause" @loadedmetadata="onLoadedMetadata">
-        Your browser does not support the video tag.
-      </video>
-    </div>
+  <main class="relative pb-20">
+    <social-wall>
+      <header class="sticky top-0 z-40 w-full z-10 py-2 bg-[#003] border-[#00003370] overflow-hidden">
+        <social-wall-search placeholder="Search video..."></social-wall-search>
+      </header>
+
+      <div class="max-w-7xl relative mx-auto px-4 sm:px-6 md:px-8">
+        <div class="relative w-full max-w-md mx-auto">
+          <div class="sticky bottom-0 top-[3.5rem] z-40 py-5 bg-white">
+            <div class="flex flex-col">
+              <h3 class="font-bold pl-2 mb-2">Tags:</h3>
+              <social-wall-tags></social-wall-tags>
+            </div>
+          </div>
+          <div class="max-w-3xl mx-auto pt-10 px-3">
+            <social-wall-videos></social-wall-videos>
+          </div>
+        </div>
+      </div>
+    </social-wall>
   </main>
 </template>
 
-<script lang="ts">
-import { ref, onMounted } from 'vue'
-
-export default {
-  name: 'VideoPlayer',
-  setup() {
-    // Set the source of the video to the Go server endpoint
-    const videoSrc = ref('http://localhost:8080/api/v1/feeds/7432034974246669611/stream')
-    const videoPlayer = ref(null)
-
-    // Methods for handling video events
-    const onPlay = () => console.log('Video playing...')
-    const onPause = () => console.log('Video paused.')
-    const onLoadedMetadata = () => {
-      console.log('Video metadata loaded.')
-    }
-
-    // On mount, you could check if the video is accessible or log info
-    onMounted(() => {
-      console.log('Video component mounted.')
-    })
-
-    return {
-      videoSrc,
-      videoPlayer,
-      onPlay,
-      onPause,
-      onLoadedMetadata,
-    }
-  },
-}
-</script>
-
-<style scoped>
-.video-container {
-  text-align: center;
-  margin-top: 20px;
-}
-</style>
+<style scoped></style>

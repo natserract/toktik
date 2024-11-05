@@ -8,7 +8,7 @@ import debounce from '@utils/debounce'
 const props = defineProps<{
   placeholder: string
   debounceTime: number
-  onSearch: (query: string) => void
+  onSearch?: (query: string) => void
 }>()
 
 const query = ref('')
@@ -40,7 +40,7 @@ const fetchRecommendationTags = async () => {
 }
 
 const onInput = async () => {
-  props.onSearch(query.value)
+  props.onSearch && props.onSearch(query.value)
 
   try {
     if (query.value.length > 2) {
