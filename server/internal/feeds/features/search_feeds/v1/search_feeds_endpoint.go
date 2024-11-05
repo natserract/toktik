@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -8,6 +9,9 @@ import (
 	"github.com/natserract/toktik/internal/feeds/contracts/params"
 	"github.com/natserract/toktik/internal/feeds/data/repositories"
 	"github.com/natserract/toktik/internal/feeds/features/search_feeds/v1/dtos"
+	userInterestsRepo "github.com/natserract/toktik/internal/user_interests/data/repositories"
+	createUserInterestV1 "github.com/natserract/toktik/internal/user_interests/features/create_user_interest/v1"
+	"github.com/natserract/toktik/shared/store"
 )
 
 type searchFeedsEndpoint struct {
@@ -59,28 +63,28 @@ func (ep *searchFeedsEndpoint) handler() echo.HandlerFunc {
 		}
 
 		// Collect query results to user interests
-		// userInterestsRepo := userInterestsRepo.NewUserInterestsRepository(ep.Store)
-		// var titles []string
-		// for _, data := range queryResult.Data {
-		// 	titles = append(titles, data.Title)
-		// }
-		// actor := ep.Store.UserInterests.Key(
-		// 	store.SearchUserInterestsActor,
-		// 	query.Keywords,
-		// 	query.Count,
-		// )
-		// userInterestQuery := createUserInterestV1.CreateUserInterest{
-		// 	Actor:        actor,
-		// 	PageContents: titles,
-		// }
-		// if err := userInterestQuery.Validate(); err != nil {
-		// 	return c.String(http.StatusBadRequest, "query validation failed")
-		// }
-		// userInterestsHandler := createUserInterestV1.NewCreateUserInterestHandler(userInterestsRepo)
-		// err = userInterestsHandler.Handle(ctx, userInterestQuery)
-		// if err != nil {
-		// 	fmt.Println("error in collecting user interests", err)
-		// }
+		userInterestsRepo := userInterestsRepo.NewUserInterestsRepository(ep.Store)
+		var titles []string
+		for _, data := range queryResult.Data {
+			titles = append(titles, data.Title)
+		}
+		actor := ep.Store.UserInterests.Key(
+			store.SearchUserInterestsActor,
+			query.Keywords,
+			query.Count,
+		)
+		userInterestQuery := createUserInterestV1.CreateUserInterest{
+			Actor:        actor,
+			PageContents: titles,
+		}
+		if err := userInterestQuery.Validate(); err != nil {
+			return c.String(http.StatusBadRequest, "query validation failed")
+		}
+		userInterestsHandler := createUserInterestV1.NewCreateUserInterestHandler(userInterestsRepo)
+		err = userInterestsHandler.Handle(ctx, userInterestQuery)
+		if err != nil {
+			fmt.Println("error in collecting user interests", err)
+		}
 
 		return c.JSON(http.StatusOK, queryResult)
 	}
