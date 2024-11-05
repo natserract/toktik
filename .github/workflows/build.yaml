@@ -12,7 +12,7 @@ on:
       - 'packages/**'
 
 jobs:
-  build:
+  build-frontend:
     runs-on: ubuntu-latest
 
     steps:
@@ -47,7 +47,7 @@ jobs:
         run: pnpm i --frozen-lockfile
 
       - name: Build
-        run: pnpm --filter radix-vue build
+        run: pnpm build
 
       - name: Check for errors
         run: |
@@ -57,3 +57,37 @@ jobs:
             echo "Build failed"
             exit 1
           fi
+
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.22.x
+        id: go
+
+      - run: go version
+
+      - name: Cache go modules
+        id: cache
+        uses: actions/cache@preview
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        working-directory: server
+        run: go mod download
+
+      - name: Build
+        working-directory: server
+        run: go build ./...
+
+
+
