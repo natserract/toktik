@@ -1,8 +1,9 @@
 import { BaseClient } from './client'
 import { ENDPOINTS } from '../constants/endpoints'
+import { VideoAttributesSchema, VideoAttributes } from '@toktik/contracts'
 
 export class VideosAPI extends BaseClient {
-  public async searchVideos(keywords: string, count: number): Promise<any[]> {
+  public async searchVideos(keywords: string, count: number): Promise<VideoAttributes[]> {
     return this.getResources(`${ENDPOINTS.VIDEOS}/search`, {
       keywords,
       count,
