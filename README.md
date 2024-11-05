@@ -59,9 +59,22 @@ cd ..
 pnpm app:dev
 ```
 
+### Embed to your web application
+```html
+<social-wall>
+  <social-wall-tags></social-wall-tags>
+  <social-wall-search>
+  </social-wall-search>
+  <social-wall-videos></social-wall-videos>
+</social-wall>
+<script src="./dist/web-components/assets/index.70a9d52a.js"></script>
+```
+
+(See [examples](/examples)) 
+
 ## Snapshot
 
 ![Demo](/public/demo.png "demo v1")
 
 ## Contributing
-We're really excited that you're interested in contributing to Toktik!
+We're really excited that you're interested in contributing to Toktik. Pull requests are welcome!
