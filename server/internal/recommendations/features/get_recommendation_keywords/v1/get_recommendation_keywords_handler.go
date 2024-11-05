@@ -30,6 +30,8 @@ func (c *GetRecommendationKeywordsHandler) Handle(
 ) (*dtos.GetRecommendationsResponseDTO, error) {
 	// If current store hasn't data
 	// Set based on current trending topic (rapid.api)
+	var trendingKeywords []string
+
 	userInterestsCache := c.inMemoryRepository.Store.UserInterests.Cache
 	userInterestsEmbeddingCache := c.inMemoryRepository.Store.UserInterestsEmbedding.Cache
 	if userInterestsCache.Len() == 0 || userInterestsEmbeddingCache.Len() == 0 {
@@ -44,18 +46,17 @@ func (c *GetRecommendationKeywordsHandler) Handle(
 			return nil, err
 		}
 
-		var titles []string
 		for _, trending := range trendings.Data {
 			if trending.Title != "" {
 				textSplitted := util.TextSplitter(trending.Title)
 				if len(textSplitted.Tags) != 0 && len(textSplitted.Titles) != 0 {
-					titles = append(titles, strings.Join(textSplitted.Titles, " "))
+					trendingKeywords = append(trendingKeywords, strings.Join(textSplitted.Titles, " "))
 				}
 			}
 		}
 		// Sometimes trendings value is empty
-		if len(titles) == 0 {
-			titles = append(titles, []string{
+		if len(trendings.Data) == 0 {
+			trendingKeywords = append(trendingKeywords, []string{
 				"Health and Wellness",
 				"Economic Trends",
 				"Education Reform",
@@ -64,9 +65,17 @@ func (c *GetRecommendationKeywordsHandler) Handle(
 
 		return &dtos.GetRecommendationsResponseDTO{
 			Data: dtos.GetRecommendationsData{
-				Keywords: helper.SafeSubslice(titles, 3),
+				Keywords: helper.SafeSubslice(trendingKeywords, 3),
 			},
 		}, nil
+	}
+
+	if len(trendingKeywords) == 0 {
+		trendingKeywords = append(trendingKeywords, []string{
+			"Health and Wellness",
+			"Economic Trends",
+			"Education Reform",
+		}...)
 	}
 
 	// Give user recommendations based on provided user profile
@@ -96,11 +105,19 @@ func (c *GetRecommendationKeywordsHandler) Handle(
 			return nil, err
 		}
 
-		log.Println("Found title similarities: ", titles, titleSimilarityScores)
-		result = &dtos.GetRecommendationsResponseDTO{
-			Data: dtos.GetRecommendationsData{
-				Keywords: helper.SafeSubslice(titles, 3),
-			},
+		if len(titles) != 0 {
+			log.Println("Found title similarities: ", titles, titleSimilarityScores)
+			result = &dtos.GetRecommendationsResponseDTO{
+				Data: dtos.GetRecommendationsData{
+					Keywords: helper.SafeSubslice(titles, 3),
+				},
+			}
+		} else {
+			result = &dtos.GetRecommendationsResponseDTO{
+				Data: dtos.GetRecommendationsData{
+					Keywords: helper.SafeSubslice(trendingKeywords, 3),
+				},
+			}
 		}
 	}
 

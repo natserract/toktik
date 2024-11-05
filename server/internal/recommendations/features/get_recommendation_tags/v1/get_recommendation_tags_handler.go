@@ -2,6 +2,7 @@ package v1
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"strings"
 
@@ -30,6 +31,8 @@ func (c *GetRecommendationTagsHandler) Handle(
 ) (*dtos.GetRecommendationTagsResponseDTO, error) {
 	// If current store hasn't data
 	// Set based on current trending topic (rapid.api)
+	var trendingTags []string
+
 	userInterestsCache := c.inMemoryRepository.Store.UserInterests.Cache
 	userInterestsEmbeddingCache := c.inMemoryRepository.Store.UserInterestsEmbedding.Cache
 	if userInterestsCache.Len() == 0 || userInterestsEmbeddingCache.Len() == 0 {
@@ -44,18 +47,18 @@ func (c *GetRecommendationTagsHandler) Handle(
 			return nil, err
 		}
 
-		var tags []string
 		for _, trending := range trendings.Data {
 			if trending.Title != "" {
 				textSplitted := util.TextSplitter(trending.Title)
 				if len(textSplitted.Tags) != 0 && len(textSplitted.Titles) != 0 {
-					tags = append(tags, strings.Join(textSplitted.Tags, " "))
+					trendingTags = append(trendingTags, strings.Join(textSplitted.Tags, " "))
 				}
 			}
 		}
+
 		// Sometimes trendings value is empty
-		if len(tags) == 0 {
-			tags = append(tags, []string{
+		if len(trendings.Data) == 0 {
+			trendingTags = append(trendingTags, []string{
 				"#Health #Wellness #Lifestyle",
 				"#Economy #Finance #GlobalTrends",
 				" #Education #Learning #Reform",
@@ -64,9 +67,17 @@ func (c *GetRecommendationTagsHandler) Handle(
 
 		return &dtos.GetRecommendationTagsResponseDTO{
 			Data: dtos.GetRecommendationTagsData{
-				Tags: helper.SafeSubslice(tags, 3),
+				Tags: helper.SafeSubslice(trendingTags, 3),
 			},
 		}, nil
+	}
+
+	if len(trendingTags) == 0 {
+		trendingTags = append(trendingTags, []string{
+			"#Health #Wellness #Lifestyle",
+			"#Economy #Finance #GlobalTrends",
+			" #Education #Learning #Reform",
+		}...)
 	}
 
 	// Give user recommendations based on provided user profile
@@ -95,14 +106,24 @@ func (c *GetRecommendationTagsHandler) Handle(
 		if err != nil {
 			return nil, err
 		}
-		log.Println("Found tags similarities: ", tags, tagsSimilarityScores)
 
-		result = &dtos.GetRecommendationTagsResponseDTO{
-			Data: dtos.GetRecommendationTagsData{
-				Tags: helper.SafeSubslice(tags, 3),
-			},
+		if len(tags) != 0 {
+			log.Println("Found tags similarities: ", tags, tagsSimilarityScores)
+			result = &dtos.GetRecommendationTagsResponseDTO{
+				Data: dtos.GetRecommendationTagsData{
+					Tags: helper.SafeSubslice(tags, 3),
+				},
+			}
+		} else {
+			result = &dtos.GetRecommendationTagsResponseDTO{
+				Data: dtos.GetRecommendationTagsData{
+					Tags: helper.SafeSubslice(trendingTags, 3),
+				},
+			}
 		}
 	}
+
+	fmt.Println("trendingTags", trendingTags)
 
 	return result, nil
 }

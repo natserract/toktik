@@ -17,6 +17,10 @@ func FindMostSimilar(queryVector []float32, models []repositories.SaveUserIntere
 	for _, data := range models {
 		switch vectorType {
 		case "tags":
+			if data.Tag == "" {
+				continue
+			}
+
 			tagVector := util.Float32ToFloat64(data.TagsVector)
 
 			// Ensure both vectors are non-empty and of the same length
@@ -37,6 +41,10 @@ func FindMostSimilar(queryVector []float32, models []repositories.SaveUserIntere
 				}
 			}
 		case "title":
+			if data.Title == "" {
+				continue
+			}
+
 			titleVector := util.Float32ToFloat64(data.TitleVector)
 
 			// Ensure both vectors are non-empty and of the same length
