@@ -16,7 +16,7 @@ defineComponent({
   <main class="relative pb-20">
     <social-wall>
       <header class="sticky top-0 z-40 w-full z-10 py-2 bg-[#003] border-[#00003370] overflow-hidden">
-        <social-wall-search placeholder="Search video..."></social-wall-search>
+        <social-wall-search debounce-time="5000" placeholder="Search video..."></social-wall-search>
       </header>
 
       <div class="max-w-7xl relative mx-auto px-4 sm:px-6 md:px-8">
