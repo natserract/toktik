@@ -77,6 +77,7 @@ func (s *echoHttpServer) SetupDefaultMiddlewares() {
 	s.echo.Use(customMiddleware.LogMiddleware())
 	s.echo.Use(middleware.BodyLimit("2M"))
 	s.echo.Use(middleware.RequestID())
+	s.echo.Use(middleware.CORS())
 }
 
 func (s *echoHttpServer) GetEchoInstance() *echo.Echo {
