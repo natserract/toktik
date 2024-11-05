@@ -9,32 +9,32 @@ import (
 	"github.com/natserract/toktik/internal/user_interests_embedding/data/repositories"
 )
 
-type getRecommendationEndpoint struct {
+type getRecommendationKeywordsEndpoint struct {
 	params.RecommendationsRouteParams
 }
 
-func NewGetRecommendationEndpoint(
+func NewGetRecommendationKeywordsEndpoint(
 	params params.RecommendationsRouteParams,
-) *getRecommendationEndpoint {
-	return &getRecommendationEndpoint{
+) *getRecommendationKeywordsEndpoint {
+	return &getRecommendationKeywordsEndpoint{
 		RecommendationsRouteParams: params,
 	}
 }
 
-func (ep *getRecommendationEndpoint) MapEndpoint() {
-	ep.RecommendationsGroup.GET("/tags", ep.handler())
+func (ep *getRecommendationKeywordsEndpoint) MapEndpoint() {
+	ep.RecommendationsGroup.Add("GET", "/keywords", ep.handler())
 }
 
-func (ep *getRecommendationEndpoint) handler() echo.HandlerFunc {
+func (ep *getRecommendationKeywordsEndpoint) handler() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
 
 		repo := repositories.NewUserInterestsEmbeddingRepository(ep.Store)
-		handler := NewGetRecommendationTagsHandler(repo)
+		handler := NewGetRecommendationKeywordsHandler(repo)
 		queryResult, err := handler.Handle(ctx, nil)
 		if err != nil {
 			log.Println(err)
-			return c.String(http.StatusBadRequest, "error in sending GetRecommendations")
+			return c.String(http.StatusBadRequest, "error in sending GetRecommendationKeywords")
 		}
 		return c.JSON(http.StatusOK, queryResult)
 	}

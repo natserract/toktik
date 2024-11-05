@@ -7,7 +7,7 @@ import (
 
 	"github.com/natserract/toktik/config"
 	"github.com/natserract/toktik/embedding"
-	"github.com/natserract/toktik/internal/recommendations/features/get_recommendation/v1/dtos"
+	"github.com/natserract/toktik/internal/recommendations/features/get_recommendation_tags/v1/dtos"
 	"github.com/natserract/toktik/internal/user_interests_embedding/data/repositories"
 	"github.com/natserract/toktik/internal/user_interests_embedding/shared/util"
 	"github.com/natserract/toktik/pkg/scraper"
@@ -27,7 +27,7 @@ func NewGetRecommendationTagsHandler(r repositories.UserInterestsEmbeddingReposi
 func (c *GetRecommendationTagsHandler) Handle(
 	ctx context.Context,
 	query interface{},
-) (*dtos.GetRecommendationsResponseDTO, error) {
+) (*dtos.GetRecommendationTagsResponseDTO, error) {
 	// If current store hasn't data
 	// Set based on current trending topic (rapid.api)
 	userInterestsCache := c.inMemoryRepository.Store.UserInterests.Cache
@@ -45,34 +45,26 @@ func (c *GetRecommendationTagsHandler) Handle(
 		}
 
 		var tags []string
-		var titles []string
 		for _, trending := range trendings.Data {
 			if trending.Title != "" {
 				textSplitted := util.TextSplitter(trending.Title)
 				if len(textSplitted.Tags) != 0 && len(textSplitted.Titles) != 0 {
 					tags = append(tags, strings.Join(textSplitted.Tags, " "))
-					titles = append(titles, strings.Join(textSplitted.Titles, " "))
 				}
 			}
 		}
 		// Sometimes trendings value is empty
-		if len(tags) == 0 || len(titles) == 0 {
+		if len(tags) == 0 {
 			tags = append(tags, []string{
 				"#Health #Wellness #Lifestyle",
 				"#Economy #Finance #GlobalTrends",
 				" #Education #Learning #Reform",
 			}...)
-			titles = append(titles, []string{
-				"Health and Wellness",
-				"Economic Trends",
-				"Education Reform",
-			}...)
 		}
 
-		return &dtos.GetRecommendationsResponseDTO{
-			Data: dtos.GetRecommendationsData{
-				Tags:   helper.SafeSubslice(tags, 3),
-				Titles: helper.SafeSubslice(titles, 3),
+		return &dtos.GetRecommendationTagsResponseDTO{
+			Data: dtos.GetRecommendationTagsData{
+				Tags: helper.SafeSubslice(tags, 3),
 			},
 		}, nil
 	}
@@ -85,7 +77,7 @@ func (c *GetRecommendationTagsHandler) Handle(
 	//
 	// I just find the easest solution...
 	//
-	var result *dtos.GetRecommendationsResponseDTO
+	var result *dtos.GetRecommendationTagsResponseDTO
 	results, err := c.inMemoryRepository.GetAllUserInterestsEmbedding()
 	if err != nil {
 		log.Println(err)
@@ -105,21 +97,9 @@ func (c *GetRecommendationTagsHandler) Handle(
 		}
 		log.Println("Found tags similarities: ", tags, tagsSimilarityScores)
 
-		titles, titleSimilarityScores, err := util.FindMostSimilar(
-			user_profile_vec.Values,
-			results,
-			0.7,
-			"title",
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		log.Println("Found title similarities: ", titles, titleSimilarityScores)
-		result = &dtos.GetRecommendationsResponseDTO{
-			Data: dtos.GetRecommendationsData{
-				Tags:   helper.SafeSubslice(tags, 3),
-				Titles: helper.SafeSubslice(titles, 3),
+		result = &dtos.GetRecommendationTagsResponseDTO{
+			Data: dtos.GetRecommendationTagsData{
+				Tags: helper.SafeSubslice(tags, 3),
 			},
 		}
 	}

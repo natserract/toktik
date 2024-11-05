@@ -1,7 +1,6 @@
 package dtos
 
 type GetRecommendationsData struct {
-	Tags   []string `json:"tags"`
 	Titles []string `json:"titles"`
 }
 
