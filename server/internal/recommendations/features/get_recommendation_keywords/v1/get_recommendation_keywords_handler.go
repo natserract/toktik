@@ -3,7 +3,6 @@ package v1
 import (
 	"context"
 	"log"
-	"strings"
 
 	"github.com/natserract/toktik/config"
 	"github.com/natserract/toktik/embedding"
@@ -50,31 +49,44 @@ func (c *GetRecommendationKeywordsHandler) Handle(
 			if trending.Title != "" {
 				textSplitted := util.TextSplitter(trending.Title)
 				if len(textSplitted.Tags) != 0 && len(textSplitted.Titles) != 0 {
-					trendingKeywords = append(trendingKeywords, strings.Join(textSplitted.Titles, " "))
+					trendingKeywords = append(trendingKeywords, textSplitted.Titles...)
 				}
 			}
 		}
 		// Sometimes trendings value is empty
 		if len(trendings.Data) == 0 {
 			trendingKeywords = append(trendingKeywords, []string{
-				"Health and Wellness",
-				"Economic Trends",
-				"Education Reform",
+				"AI Art Challenge: Watch Me Turn My Doodles into Masterpieces!",
+				"Zero-Waste Kitchen Hacks: Save Money and the Planet!",
+				"10-Minute Morning Yoga Routine for a Stress-Free Day",
+				"Thrift Flip: Transforming a $5 Dress into a Fashion Statement",
+				"Virtual Tour: Exploring the Hidden Gems of Kyoto",
+				"Meet My Rescue Dog: From Shelter to Superstar!",
+				"AI vs. Human: Who Can Create the Best Song?",
+				"Cooking with Grandma: Secret Family Recipes Revealed",
+				"Quick HIIT Workout: Get Fit in Just 15 Minutes!",
 			}...)
 		}
 
 		return &dtos.GetRecommendationsResponseDTO{
 			Data: dtos.GetRecommendationsData{
-				Keywords: helper.SafeSubslice(trendingKeywords, 3),
+				Keywords: helper.SafeSubslice(trendingKeywords, 10),
 			},
 		}, nil
 	}
 
-	if len(trendingKeywords) == 0 {
+	log.Println("Trending keywords: ", trendingKeywords)
+	if len(trendingKeywords) < 4 {
 		trendingKeywords = append(trendingKeywords, []string{
-			"Health and Wellness",
-			"Economic Trends",
-			"Education Reform",
+			"AI Art Challenge: Watch Me Turn My Doodles into Masterpieces!",
+			"Zero-Waste Kitchen Hacks: Save Money and the Planet!",
+			"10-Minute Morning Yoga Routine for a Stress-Free Day",
+			"Thrift Flip: Transforming a $5 Dress into a Fashion Statement",
+			"Virtual Tour: Exploring the Hidden Gems of Kyoto",
+			"Meet My Rescue Dog: From Shelter to Superstar!",
+			"AI vs. Human: Who Can Create the Best Song?",
+			"Cooking with Grandma: Secret Family Recipes Revealed",
+			"Quick HIIT Workout: Get Fit in Just 15 Minutes!",
 		}...)
 	}
 
@@ -105,17 +117,17 @@ func (c *GetRecommendationKeywordsHandler) Handle(
 			return nil, err
 		}
 
+		log.Println("Title similarities: ", titles, titleSimilarityScores)
 		if len(titles) != 0 {
-			log.Println("Found title similarities: ", titles, titleSimilarityScores)
 			result = &dtos.GetRecommendationsResponseDTO{
 				Data: dtos.GetRecommendationsData{
-					Keywords: helper.SafeSubslice(titles, 3),
+					Keywords: helper.SafeSubslice(titles, 10),
 				},
 			}
 		} else {
 			result = &dtos.GetRecommendationsResponseDTO{
 				Data: dtos.GetRecommendationsData{
-					Keywords: helper.SafeSubslice(trendingKeywords, 3),
+					Keywords: helper.SafeSubslice(trendingKeywords, 10),
 				},
 			}
 		}

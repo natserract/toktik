@@ -28,7 +28,7 @@ func NewCreateUserInterestEmbeddingHandler(r repositories.UserInterestsEmbedding
 const (
 	// If dev true, embeddings will load from local (sample/)
 	// Otherwise, generated from LLM
-	__DEV__ = true
+	__DEV__ = false
 )
 
 func (c *CreateUserInterestEmbeddingHandler) Handle(

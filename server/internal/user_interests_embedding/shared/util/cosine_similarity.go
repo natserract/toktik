@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/khaibin/go-cosinesimilarity"
 	"github.com/natserract/toktik/internal/user_interests_embedding/data/repositories"
@@ -36,7 +37,8 @@ func FindMostSimilar(queryVector []float32, models []repositories.SaveUserIntere
 			if len(similarityMatrix) > 0 && len(similarityMatrix[0]) > 0 {
 				similarity := similarityMatrix[0][0]
 				if similarity >= threshold {
-					similarityContent = append(similarityContent, data.Tag)
+					tag := strings.Split(data.Tag, " ")
+					similarityContent = append(similarityContent, tag...)
 					similarityScores = append(similarityScores, similarity)
 				}
 			}

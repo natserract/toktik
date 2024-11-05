@@ -2,9 +2,7 @@ package v1
 
 import (
 	"context"
-	"fmt"
 	"log"
-	"strings"
 
 	"github.com/natserract/toktik/config"
 	"github.com/natserract/toktik/embedding"
@@ -51,7 +49,7 @@ func (c *GetRecommendationTagsHandler) Handle(
 			if trending.Title != "" {
 				textSplitted := util.TextSplitter(trending.Title)
 				if len(textSplitted.Tags) != 0 && len(textSplitted.Titles) != 0 {
-					trendingTags = append(trendingTags, strings.Join(textSplitted.Tags, " "))
+					trendingTags = append(trendingTags, textSplitted.Tags...)
 				}
 			}
 		}
@@ -59,24 +57,37 @@ func (c *GetRecommendationTagsHandler) Handle(
 		// Sometimes trendings value is empty
 		if len(trendings.Data) == 0 {
 			trendingTags = append(trendingTags, []string{
-				"#Health #Wellness #Lifestyle",
-				"#Economy #Finance #GlobalTrends",
-				" #Education #Learning #Reform",
+				"#Health",
+				"#Wellness",
+				"#Lifestyle",
+				"#Economy",
+				"#Finance",
+				"#GlobalTrends",
+				"#Learning",
+				"#Education",
+				"#Reform",
 			}...)
 		}
 
 		return &dtos.GetRecommendationTagsResponseDTO{
 			Data: dtos.GetRecommendationTagsData{
-				Tags: helper.SafeSubslice(trendingTags, 3),
+				Tags: helper.SafeSubslice(trendingTags, 10),
 			},
 		}, nil
 	}
 
-	if len(trendingTags) == 0 {
+	log.Println("Trending tags: ", trendingTags)
+	if len(trendingTags) < 4 {
 		trendingTags = append(trendingTags, []string{
-			"#Health #Wellness #Lifestyle",
-			"#Economy #Finance #GlobalTrends",
-			" #Education #Learning #Reform",
+			"#Health",
+			"#Wellness",
+			"#Lifestyle",
+			"#Economy",
+			"#Finance",
+			"#GlobalTrends",
+			"#Learning",
+			"#Education",
+			"#Reform",
 		}...)
 	}
 
@@ -107,23 +118,21 @@ func (c *GetRecommendationTagsHandler) Handle(
 			return nil, err
 		}
 
+		log.Println("Tags similarities: ", tags, tagsSimilarityScores)
 		if len(tags) != 0 {
-			log.Println("Found tags similarities: ", tags, tagsSimilarityScores)
 			result = &dtos.GetRecommendationTagsResponseDTO{
 				Data: dtos.GetRecommendationTagsData{
-					Tags: helper.SafeSubslice(tags, 3),
+					Tags: helper.SafeSubslice(tags, 10),
 				},
 			}
 		} else {
 			result = &dtos.GetRecommendationTagsResponseDTO{
 				Data: dtos.GetRecommendationTagsData{
-					Tags: helper.SafeSubslice(trendingTags, 3),
+					Tags: helper.SafeSubslice(trendingTags, 10),
 				},
 			}
 		}
 	}
-
-	fmt.Println("trendingTags", trendingTags)
 
 	return result, nil
 }
