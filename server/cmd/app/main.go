@@ -28,11 +28,9 @@ func main() {
 	gob.Register([]interface{}{})
 	gob.Register(map[string]interface{}{})
 
-	err := godotenv.Load()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to load .env %v\n", err)
-		os.Exit(1)
-	}
+	// Railway doesn't need to load environment variables from an .env file, that's only for local development.
+	// Do nothing
+	godotenv.Load()
 
 	cfg := config.GetConfig()
 
