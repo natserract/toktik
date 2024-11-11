@@ -46,12 +46,12 @@ func task(s *store.Store) {
 	for iterator.SetNext() {
 		current, err := iterator.Value()
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 
 		userInterests, err := userInterestsRepository.GetUserInterests(current.Key())
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 
 		err = userInterestsEmbeddingHandler.Handle(context.Background(), createUserInterestEmbeddingV1.CreateUserInterestEmbedding{
@@ -59,7 +59,7 @@ func task(s *store.Store) {
 			PageContents: userInterests,
 		})
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 	}
 

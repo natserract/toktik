@@ -107,7 +107,7 @@ func (c *CreateUserInterestEmbeddingHandler) Handle(
 			if cachedTagText != "" {
 				tagsVec, err = embed.CreateVector(cachedTagText, ctx)
 				if err != nil {
-					log.Fatalf("Error creating tags embedding: %v", err)
+					log.Printf("Error creating tags embedding: %v", err)
 				}
 				log.Println("Embedding tags succesfully created")
 			}
