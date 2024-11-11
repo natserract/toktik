@@ -19,10 +19,11 @@ type Configuration struct {
 }
 
 func GetConfig() *Configuration {
+	// Railway doesn't need to load environment variables from an .env file, that's only for local development.
+	// Do nothing
 	err := godotenv.Load()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to load .env %v\n", err)
-		os.Exit(1)
 	}
 
 	port, err := env.GetEnv("PORT")
