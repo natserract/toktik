@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["go"]
+
+[phases.install]
+cmds = ["go mod tidy"]
+
+[phases.build]
+cmds = ["go build -o ./tmp/app/main ./cmd/app/main.go"]
+
+[start]
+cmd = "./tmp/app/main"
