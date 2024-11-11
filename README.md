@@ -32,6 +32,11 @@ pnpm i
 **Environment:**
 
 ```bash
+# Frontend 
+cd apps/application
+cp .env.example .env
+
+# Backend
 cd server
 cp .env.example .env
 ```
@@ -61,7 +66,7 @@ pnpm app:dev
 
 ### Embed to your web application
 ```html
-<social-wall>
+<social-wall base-url="http://localhost:8080/api/v1">
   <social-wall-tags></social-wall-tags>
   <social-wall-search>
   </social-wall-search>

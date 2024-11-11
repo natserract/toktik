@@ -2,6 +2,7 @@
 import { SocialWall, SocialWallTags, SocialWallVideos, SocialWallSearch } from '@toktik/components'
 import { defineComponent } from 'vue'
 
+const BASE_URL = import.meta.env.VITE_BASE_API_URL
 defineComponent({
   components: {
     'social-wall': SocialWall,
@@ -14,7 +15,7 @@ defineComponent({
 
 <template>
   <main class="relative pb-20">
-    <social-wall>
+    <social-wall :base-url="BASE_URL">
       <header class="sticky top-0 z-40 w-full z-10 py-2 bg-[#003] border-[#00003370] overflow-hidden">
         <social-wall-search placeholder="Search video..."></social-wall-search>
       </header>

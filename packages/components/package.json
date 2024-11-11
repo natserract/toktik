@@ -22,7 +22,7 @@
     "*.scss"
   ],
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 3001",
     "build": "rm -rf dist/ && pnpm build-only && vue-tsc --emitDeclarationOnly",
     "build-only": "vite build",
     "build:wc": "vite build --config vite.config.wc.js && vue-tsc --emitDeclarationOnly",

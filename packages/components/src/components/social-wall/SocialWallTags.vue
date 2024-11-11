@@ -1,19 +1,22 @@
 <script setup lang="ts">
 import { onMounted, computed, ref } from 'vue'
-import recommendationsAPI from '@apis/recommendations'
-import videosAPI from '@apis/feeds'
+import { RecommendationsAPI } from '@apis/recommendations'
+import { FeedsAPI } from '@apis/feeds'
 import { useSocialWallContext } from '@components/social-wall/context'
 import AsyncDataComponent from '@components/AsyncDataComponent.vue'
 
 const props = defineProps<{
   id?: string
-  onTagClick: (tag: string) => void
+  onTagClick?: (tag: string) => void
 }>()
 
 const context = useSocialWallContext()
 const tags = computed(() => context.getTags())
 const loading = computed(() => context.state.tags.loading)
 const error = computed(() => !!context.state.tags.error)
+
+const feedsApi = new FeedsAPI(context.state.baseUrl)
+const recommendationsApi = new RecommendationsAPI(context.state.baseUrl)
 
 const onClick = async (tag: string) => {
   props.onTagClick && props.onTagClick(tag)
@@ -27,7 +30,7 @@ const onClick = async (tag: string) => {
 const fetchVideosByTag = async (tag: string) => {
   try {
     context.state.feeds.loading = true
-    return await videosAPI.searchVideos(tag, 5)
+    return await feedsApi.searchVideos(tag, 5)
   } catch (err: any) {
     context.state.feeds.error = err.message
     console.error('Error fetching feeds:', error)
@@ -38,7 +41,7 @@ const fetchVideosByTag = async (tag: string) => {
 
 const fetchRecommendationTags = async () => {
   try {
-    const response = await recommendationsAPI.listTags()
+    const response = await recommendationsApi.listTags()
     context.setTags(response.data.tags)
   } catch (err: any) {
     context.state.tags.error = err.message

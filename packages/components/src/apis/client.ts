@@ -5,15 +5,18 @@ type ObjectValue<T> = T[keyof T]
 type Endpoint = ObjectValue<typeof ENDPOINTS>
 
 export class BaseClient {
-  static BASE_URL = 'http://localhost:8080/api/v1'
-
+  BASE_URL: string
   private api: AxiosInstance
 
-  constructor() {
-    this.api = axios.create({
-      baseURL: BaseClient.BASE_URL,
-    })
+  constructor(baseUrl: string) {
+    this.BASE_URL = baseUrl
+    if (!this.BASE_URL) {
+      throw new Error('Please provide base url!')
+    }
 
+    this.api = axios.create({
+      baseURL: this.BASE_URL,
+    })
     this.api.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => config,
       (error: AxiosError<string>) => Promise.reject(error)

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { onMounted, computed } from 'vue'
+import { Skeleton, SkeletonTheme } from 'vue-loading-skeleton'
 
-import videosAPI from '@apis/feeds'
+import { FeedsAPI } from '@apis/feeds'
 import { useSocialWallContext } from '@components/social-wall/context'
 import SocialWallVideoPlayer from '@components/social-wall/SocialWallVideoPlayer.vue'
-import { Skeleton, SkeletonTheme } from 'vue-loading-skeleton'
 
 const props = defineProps<{
   id?: string
@@ -18,9 +18,11 @@ const videos = computed(() => context.getFeeds())
 const loading = computed(() => context.state.feeds.loading)
 const error = computed(() => !!context.state.feeds.error)
 
+const feedsApi = new FeedsAPI(context.state.baseUrl)
+
 const fetchVideos = async () => {
   try {
-    const response = await videosAPI.searchVideos('Trending', 10)
+    const response = await feedsApi.searchVideos('Trending', 10)
     context.setFeeds(response.data)
   } catch (err: any) {
     context.state.feeds.error = err.message
@@ -45,7 +47,7 @@ if (context.getFeeds().length === 0) {
       <div :id="props.id ? props.id : ''" class="max-w-md flex flex-col gap-10">
         <div v-for="(video, index) in videos" :key="index" class="bg-white rounded-lg shadow-md overflow-hidden">
           <SocialWallVideoPlayer
-            :url="videosAPI.getStreamVideoUrl(video.id || video.video_id)"
+            :url="feedsApi.getStreamVideoUrl(video.id || video.video_id)"
             :cover="video.cover"
             :controls="props?.controls"
             @play="props?.onPlay && props?.onPlay(video.id || video.video_id)"

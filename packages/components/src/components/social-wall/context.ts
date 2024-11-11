@@ -13,14 +13,16 @@ type TagsState = {
 }
 
 interface SocialWallState {
+  baseUrl: string
   feeds: FeedsState
   tags: TagsState
 }
 
 const SocialWallContextSymbol = Symbol('SocialWallContext')
 
-export function provideSocialWallContext() {
+export function provideSocialWallContext(baseUrl: string) {
   const state = reactive<SocialWallState>({
+    baseUrl,
     feeds: {
       loading: true,
       error: null,

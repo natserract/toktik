@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import videosAPI from '@apis/feeds'
 import { useSocialWallContext } from '@components/social-wall/context'
-import recommendationsAPI from '@apis/recommendations'
+import { RecommendationsAPI } from '@apis/recommendations'
+import { FeedsAPI } from '@apis/feeds'
 import debounce from '@utils/debounce'
 
 const props = defineProps<{
@@ -14,10 +14,13 @@ const props = defineProps<{
 const query = ref('')
 const context = useSocialWallContext()
 
+const feedsApi = new FeedsAPI(context.state.baseUrl)
+const recommendationsApi = new RecommendationsAPI(context.state.baseUrl)
+
 const fetchVideos = async (query: string, count = 10) => {
   try {
     context.state.feeds.loading = true
-    return await videosAPI.searchVideos(query, count)
+    return await feedsApi.searchVideos(query, count)
   } catch (err: any) {
     context.state.feeds.error = err.message
     console.error('Error fetching feeds:', err)
@@ -29,7 +32,7 @@ const fetchVideos = async (query: string, count = 10) => {
 
 const fetchRecommendationTags = async () => {
   try {
-    const response = await recommendationsAPI.listTags()
+    const response = await recommendationsApi.listTags()
     context.setTags(response.data.tags)
   } catch (err: any) {
     context.state.tags.error = err.message

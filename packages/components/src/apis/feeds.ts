@@ -1,10 +1,10 @@
 import { BaseClient } from './client'
 import { ENDPOINTS } from '../constants/endpoints'
-import { FeedsAPI } from '@toktik/contracts'
+import { FeedsAPI as FeedsAPIContract } from '@toktik/contracts'
 
-export class VideosAPI extends BaseClient {
-  public async searchVideos(keywords: string, count: number): Promise<FeedsAPI.SearchResponse> {
-    return this.getResources<FeedsAPI.SearchResponse>(`${ENDPOINTS.FEEDS}/search`, {
+export class FeedsAPI extends BaseClient {
+  public async searchVideos(keywords: string, count: number): Promise<FeedsAPIContract.SearchResponse> {
+    return this.getResources<FeedsAPIContract.SearchResponse>(`${ENDPOINTS.FEEDS}/search`, {
       keywords,
       count,
     })
@@ -15,13 +15,10 @@ export class VideosAPI extends BaseClient {
   }
 
   public getStreamVideoUrl(id: string): string {
-    return `${BaseClient.BASE_URL}${ENDPOINTS.FEEDS}/${id}/stream`
+    return `${this.BASE_URL}${ENDPOINTS.FEEDS}/${id}/stream`
   }
 
   public async getStreamVideoById(id: string): Promise<any> {
     return this.getResource(`${ENDPOINTS.FEEDS}/stream`, id)
   }
 }
-const videosAPI = new VideosAPI()
-
-export default videosAPI
