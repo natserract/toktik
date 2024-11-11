@@ -36,32 +36,37 @@ func EmbeddingJob(duration time.Duration, r *store.Store) {
 }
 
 func task(s *store.Store) {
-	log.Println("Embedding jobs running... ")
+	cacheLen := s.UserInterests.Cache.Len()
+	if cacheLen < 4 {
+		log.Println("Embedding jobs running... ")
 
-	userInterestsRepository := userInterestsRepo.NewUserInterestsRepository(s)
-	userInterestsEmbeddingRepository := userInterestsEmbeddingRepo.NewUserInterestsEmbeddingRepository(s)
-	userInterestsEmbeddingHandler := createUserInterestEmbeddingV1.NewCreateUserInterestEmbeddingHandler(userInterestsEmbeddingRepository)
+		userInterestsRepository := userInterestsRepo.NewUserInterestsRepository(s)
+		userInterestsEmbeddingRepository := userInterestsEmbeddingRepo.NewUserInterestsEmbeddingRepository(s)
+		userInterestsEmbeddingHandler := createUserInterestEmbeddingV1.NewCreateUserInterestEmbeddingHandler(userInterestsEmbeddingRepository)
 
-	iterator := s.UserInterests.Cache.Iterator()
-	for iterator.SetNext() {
-		current, err := iterator.Value()
-		if err != nil {
-			log.Println(err)
+		iterator := s.UserInterests.Cache.Iterator()
+		for iterator.SetNext() {
+			current, err := iterator.Value()
+			if err != nil {
+				log.Println(err)
+			}
+
+			userInterests, err := userInterestsRepository.GetUserInterests(current.Key())
+			if err != nil {
+				log.Println(err)
+			}
+
+			err = userInterestsEmbeddingHandler.Handle(context.Background(), createUserInterestEmbeddingV1.CreateUserInterestEmbedding{
+				Actor:        current.Key(),
+				PageContents: userInterests,
+			})
+			if err != nil {
+				log.Println(err)
+			}
 		}
 
-		userInterests, err := userInterestsRepository.GetUserInterests(current.Key())
-		if err != nil {
-			log.Println(err)
-		}
-
-		err = userInterestsEmbeddingHandler.Handle(context.Background(), createUserInterestEmbeddingV1.CreateUserInterestEmbedding{
-			Actor:        current.Key(),
-			PageContents: userInterests,
-		})
-		if err != nil {
-			log.Println(err)
-		}
+		log.Println("Embedding jobs finished...")
+	} else {
+		log.Println("Limit embedding/vectorization. Max: 3", cacheLen)
 	}
-
-	log.Println("Embedding jobs finished...")
 }
