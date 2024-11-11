@@ -31,6 +31,11 @@ func GetConfig() *Configuration {
 		return nil
 	}
 
+	host, err := env.GetEnv("HOST")
+	if err != nil {
+		return nil
+	}
+
 	rapidApiKey, err := env.GetEnv("RAPID_API_KEY")
 	if err != nil {
 		return nil
@@ -48,7 +53,7 @@ func GetConfig() *Configuration {
 
 	return &Configuration{
 		Port:        port,
-		Host:        "localhost",
+		Host:        host,
 		RapidApiKey: rapidApiKey,
 		RapiApiHost: rapidApiHost,
 		OpenAIKey:   openAIKey,
